@@ -1,32 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>VipherAid | Report an Animal</title>
-  <link rel="stylesheet" href="{{ url_for('static',filename='style.css')}}">
+  <title>VipherAid | Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-  <headerclass="tobar">
-    <div class="nav">
-      <a class="link "href="/">Home</a>
-      <span class="page-title">Report an Animal</span>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">v</div>
+      <div>
+        <h1 class="brand-title">VipherAid</h1>
+        <p class="brand-subtitle">Report • Rescue • Track • Support</p>
+      </div>
     </div>
   </header>
+
   <main class="container">
-    <section  class="card">
-        <h2>Report an Injured / Distressed Animal</h2>
-        <p class="muted">photo is mandatory to help rescuers assess urgency.</p>
-        <form class="form" action="#" method="post" entype="multipart/form-data">
-          <div class="row">
-            <div class="field">
-              <label for ="animalType>AnimalType</label>
-              <select id="animalType" name="animal_type" required>
-                <option value="" selected disabled>Choose one</option>
-                <option>Dog</option>
-                <option>Cat</option>
-                <option>Bird</option>
-                <option>Other</option>
-              </select>
-            </div>
-          
+    <section class="card hero">
+      <h2>Animal Rescue, Organized.</h2>
+      <p>
+        A single platform to report injured animals, coordinate rescues, update status, and support cases.
+      </p>
