@@ -1,1 +1,45 @@
-<h1>Report Animal</h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VipherAid | Report an Animal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="nav">
+      <a class="link" href="/">← Home</a>
+      <span class="page-title">Report an Animal</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Report an Injured / Distressed Animal</h2>
+      <p class="muted">Photo is mandatory to help rescuers assess urgency.</p>
+
+      <!-- For now this is UI-only. Later we will POST to Flask and store data. -->
+      <form class="form" action="#" method="post" enctype="multipart/form-data">
+        <div class="row">
+          <div class="field">
+            <label for="animalType">Animal Type</label>
+            <select id="animalType" name="animal_type" required>
+              <option value="" selected disabled>Choose one</option>
+              <option>Dog</option>
+              <option>Cat</option>
+              <option>Bird</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="urgency">Urgency</label>
+            <select id="urgency" name="urgency" required>
+              <option value="" selected disabled>Choose one</option>
+              <option>High (bleeding / cannot move)</option>
+              <option>Medium (injured but stable)</option>
+              <option>Low (needs help / food / shelter)</option>
+            </select>
+          </div>
+        </div>
