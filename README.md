@@ -60,28 +60,36 @@ VipherAid provides a centralized system that organizes the entire rescue workflo
 The repository is organized to support parallel team collaboration and clean separation of concerns.
 
 VipherAid/
+│
 ├── frontend/
-│ └── html-css/
-│ ├── home/
-│ │ └── index.html
-│ ├── report-animal/
-│ │ └── report.html
-│ ├── rescue-dashboard/
-│ │ └── rescue.html
-│ ├── funding/
-│ │ └── donate.html
-│ └── about/
-│ └── about.html
+│   └── html-css/
+│       ├── home/
+│       │   └── index.html
+│       │
+│       ├── report-animal/
+│       │   └── report.html
+│       │
+│       ├── rescue-dashboard/
+│       │   └── rescue.html
+│       │
+│       ├── funding/
+│       │   └── donate.html
+│       │
+│       └── about/
+│           └── about.html
 │
 ├── backend/
-│ ├── app.py
-│ ├── templates/
-│ └── static/
+│   ├── app.py
+│   ├── templates/
+│   └── static/
 │
 ├── presentation/
+│
 ├── research/
+│
 ├── .gitignore
-└── README.md 
+└── README.md
+
 
 
 ### Folder Explanation
