@@ -57,60 +57,51 @@ VipherAid provides a centralized system that organizes the entire rescue workflo
 
 ## 📁 Project Structure
 
-The repository is organized to support parallel team collaboration and clean separation of concerns.
+### frontend/
+Contains all the static frontend files used to design the user interface of the application.  
+This folder is mainly handled by the frontend and UI/UX team.
 
-VipherAid/
-│
-├── frontend/
-│   └── html-css/
-│       ├── home/
-│       │   └── index.html
-│       │
-│       ├── report-animal/
-│       │   └── report.html
-│       │
-│       ├── rescue-dashboard/
-│       │   └── rescue.html
-│       │
-│       ├── funding/
-│       │   └── donate.html
-│       │
-│       └── about/
-│           └── about.html
-│
-├── backend/
-│   ├── app.py
-│   ├── templates/
-│   └── static/
-│
-├── presentation/
-│
-├── research/
-│
-├── .gitignore
-└── README.md
-
-
-
-### Folder Explanation
-
-- **frontend/**  
-  Contains the static HTML and CSS files used by the frontend team to design and iterate on UI and UX.
-
-- **backend/**  
-  Contains the Flask application used to run the working demo and handle routing and future backend logic.
-
-  - `app.py` – Flask entry point and route definitions  
-  - `templates/` – Flask-rendered HTML pages  
-  - `static/` – CSS and static assets  
-
-- **presentation/**  
-  Contains project presentation materials and scripts.
-
-- **research/**  
-  Contains research notes, references, and supporting information.
+- Includes HTML pages for:
+  - Home page
+  - Report animal page
+  - Rescue dashboard
+  - Funding section
+  - About page  
+- Used to design and iterate on UI and UX before backend integration.
 
 ---
+
+### backend/
+Contains the Flask backend application responsible for running the working demo and handling routing logic.
+
+Inside this folder:
+- **app.py**  
+  Flask entry point and route definitions.
+- **templates/**  
+  Stores HTML files rendered by Flask.
+- **static/**  
+  Contains CSS files and other static assets.
+
+---
+
+### presentation/
+Contains project presentation materials such as slides, scripts, and demo explanations used during the hackathon.
+
+---
+
+### research/
+Contains research notes, references, and supporting information related to the problem statement and solution.
+
+---
+
+### .gitignore
+Used to prevent unnecessary files (such as virtual environments and cache files) from being pushed to the repository.
+
+---
+
+### README.md
+Provides an overview of the project, problem statement, solution, application flow, and repository structure.
+
 
 ## 🛠 Tech Stack
 
