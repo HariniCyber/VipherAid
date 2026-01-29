@@ -1,1 +1,50 @@
-<h1>VipherAid Home</h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VipherAid | Home</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">v</div>
+      <div>
+        <h1 class="brand-title">VipherAid</h1>
+        <p class="brand-subtitle">Report • Rescue • Track • Support</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card hero">
+      <h2>Animal Rescue, Organized.</h2>
+      <p>
+        A single platform to report injured animals, coordinate rescues, update status, and support cases.
+      </p>
+
+      <div class="grid">
+        <a class="btn" href="/report">Report an Animal</a>
+        <a class="btn" href="/rescue">Rescue Dashboard</a>
+        <a class="btn" href="/funding">Funding / Donate</a>
+        <a class="btn" href="/about">About & Team</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>How it works</h3>
+      <ol class="steps">
+        <li>Citizen reports an injured animal with location + photo.</li>
+        <li>Rescuers/NGOs/Vets view cases and take action.</li>
+        <li>Status updates are visible to everyone.</li>
+        <li>Supporters can donate via QR (prototype).</li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>VipherAid • Hackathon Prototype</small>
+  </footer>
+</body>
+</html>
