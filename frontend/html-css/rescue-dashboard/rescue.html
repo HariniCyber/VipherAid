@@ -1,1 +1,33 @@
-<h1>Rescue Dashboard</h1>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VipherAid | Rescue Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="nav">
+      <a class="link" href="/">← Home</a>
+      <span class="page-title">Rescue Dashboard</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Active Rescue Cases</h2>
+      <p class="muted">Prototype UI. Later this will show real reports from backend.</p>
+
+      <div class="filters">
+        <span class="pill">Reported</span>
+        <span class="pill">In Progress</span>
+        <span class="pill">Resolved</span>
+      </div>
+
+      <div class="case-list">
+        <article class="case">
+          <div class="case-head">
+            <h3>Dog • Near Main Gate</h3>
+            <span class="status reported">Reported</span>
+          </div>
