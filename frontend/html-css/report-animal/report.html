@@ -43,3 +43,36 @@
             </select>
           </div>
         </div>
+<div class="field">
+          <label for="location">Location (landmark / area)</label>
+          <input id="location" name="location" type="text" placeholder="Eg: Near Main Gate, Block A" required />
+        </div>
+
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="5" placeholder="Describe the situation, injury, behavior..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="photo">Upload Photo (Mandatory)</label>
+          <input id="photo" name="photo" type="file" accept="image/*" required />
+          <p class="hint">Tip: Use a clear photo showing the animal and surroundings.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn primary" type="submit">Submit Report</button>
+          <a class="btn ghost" href="/">Cancel</a>
+        </div>
+
+        <p class="note">
+          Next step: connect this form to Flask (POST) and store reports.
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>VipherAid • Report Page</small>
+  </footer>
+</body>
+</html>
