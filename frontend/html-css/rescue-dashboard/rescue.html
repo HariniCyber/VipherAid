@@ -31,3 +31,46 @@
             <h3>Dog • Near Main Gate</h3>
             <span class="status reported">Reported</span>
           </div>
+          <p>Small injury on leg. Unable to walk properly. Photo uploaded.</p>
+          <div class="case-actions">
+            <button class="btn small">Accept</button>
+            <button class="btn small ghost">Mark In Progress</button>
+            <button class="btn small ghost">Mark Resolved</button>
+          </div>
+        </article>
+
+        <article class="case">
+          <div class="case-head">
+            <h3>Cat • Library Backside</h3>
+            <span class="status progress">In Progress</span>
+          </div>
+          <p>Looks dehydrated. Pick-up team on the way.</p>
+          <div class="case-actions">
+            <button class="btn small ghost">Update Notes</button>
+            <button class="btn small">Mark Resolved</button>
+          </div>
+        </article>
+
+        <article class="case">
+          <div class="case-head">
+            <h3>Bird • Canteen Area</h3>
+            <span class="status resolved">Resolved</span>
+          </div>
+          <p>Rescued and moved to shelter. Vet check completed.</p>
+          <div class="case-actions">
+            <button class="btn small ghost" disabled>Completed</button>
+          </div>
+        </article>
+      </div>
+
+      <p class="note">
+        Next step: Flask will load cases from stored reports and update status.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>VipherAid • Dashboard</small>
+  </footer>
+</body>
+</html>
