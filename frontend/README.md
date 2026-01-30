@@ -1,1 +1,0 @@
-Frontend files for VipherAid
