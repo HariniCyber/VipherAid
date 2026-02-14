@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Ambulance Help - ViperAid{% endblock %}
+{% block title %}Ambulance Help - VipherAid{% endblock %}
 {% block content %}
 <section class="py-5">
   <div class="container py-3">
@@ -61,9 +61,9 @@ document.getElementById("ambForm").addEventListener("submit",(e)=>{
     area: aArea.value.trim(),
     createdAt: new Date().toISOString()
   };
-  const list = JSON.parse(localStorage.getItem("viperaid_vehicles") || "[]");
+  const list = JSON.parse(localStorage.getItem("vipheraid_vehicles") || "[]");
   list.unshift(payload);
-  localStorage.setItem("viperaid_vehicles", JSON.stringify(list));
+  localStorage.setItem("vipheraid_vehicles", JSON.stringify(list));
   alert("Vehicle support saved. Thank you!");
   e.target.reset();
 });
