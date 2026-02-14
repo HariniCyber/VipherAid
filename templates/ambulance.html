@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Ambulance Help - ViperAid{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container py-3">
+    <div class="va-card p-4 p-lg-5">
+      <h1 class="fw-bold mb-2">Ambulance / Vehicle Help</h1>
+      <p class="va-soft mb-4">Register if you can support transport (bike/car/auto/van/ambulance).</p>
+
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <form id="ambForm">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Name *</label>
+              <input id="aName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Phone *</label>
+              <input id="aPhone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Vehicle Type *</label>
+              <select id="aVehicle" class="form-select" required>
+                <option value="">Select</option>
+                <option>Bike</option><option>Car</option><option>Auto</option>
+                <option>Van</option><option>Ambulance</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Available Area *</label>
+              <input id="aArea" class="form-control" required placeholder="Madurai - KK Nagar">
+            </div>
+            <button class="va-btn" type="submit"><i class="fa-solid fa-truck-medical"></i>Register</button>
+          </form>
+          <div class="va-soft small mt-3">(Demo) Saves locally.</div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="p-4 rounded-4" style="background: rgba(20,184,166,0.10); border:1px solid rgba(20,184,166,0.18);">
+            <h5 class="fw-bold mb-2">Safety note</h5>
+            <p class="va-soft mb-0">
+              Help only if safe. Avoid traffic risk. Call NGO/rescue teams when possible.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById("ambForm").addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const payload = {
+    name: aName.value.trim(),
+    phone: aPhone.value.trim(),
+    vehicle: aVehicle.value,
+    area: aArea.value.trim(),
+    createdAt: new Date().toISOString()
+  };
+  const list = JSON.parse(localStorage.getItem("viperaid_vehicles") || "[]");
+  list.unshift(payload);
+  localStorage.setItem("viperaid_vehicles", JSON.stringify(list));
+  alert("Vehicle support saved. Thank you!");
+  e.target.reset();
+});
+</script>
+{% endblock %}
