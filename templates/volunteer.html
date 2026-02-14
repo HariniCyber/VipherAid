@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Volunteer - ViperAid{% endblock %}
+{% block content %}
+<section class="py-5">
+  <div class="container py-3">
+    <div class="va-card p-4 p-lg-5">
+      <h1 class="fw-bold mb-2">Volunteer with ViperAid</h1>
+      <p class="va-soft mb-4">Transport, foster support, feeding routes, rescue help, awareness.</p>
+
+      <div class="row g-3">
+        <div class="col-lg-7">
+          <form id="volForm">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Name *</label>
+              <input id="vName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Phone *</label>
+              <input id="vPhone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Area *</label>
+              <input id="vArea" class="form-control" required placeholder="Madurai, Anna Nagar">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Role *</label>
+              <select id="vRole" class="form-select" required>
+                <option value="">Select</option>
+                <option>Transport support</option>
+                <option>Feeding support</option>
+                <option>Foster support</option>
+                <option>On-ground rescue assistance</option>
+                <option>Social media / awareness</option>
+              </select>
+            </div>
+            <button class="va-btn" type="submit"><i class="fa-solid fa-handshake-angle"></i>Submit</button>
+          </form>
+          <div class="va-soft small mt-3">(Demo) Saves locally.</div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="p-4 rounded-4" style="background: rgba(243,156,18,0.10); border:1px solid rgba(243,156,18,0.18);">
+            <h5 class="fw-bold mb-2">Why this matters</h5>
+            <p class="va-soft mb-0">
+              Rescue isn’t just one moment. Volunteers speed up transport, foster placement, and recovery support.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById("volForm").addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const payload = {
+    name: vName.value.trim(),
+    phone: vPhone.value.trim(),
+    area: vArea.value.trim(),
+    role: vRole.value,
+    createdAt: new Date().toISOString()
+  };
+  const list = JSON.parse(localStorage.getItem("viperaid_volunteers") || "[]");
+  list.unshift(payload);
+  localStorage.setItem("viperaid_volunteers", JSON.stringify(list));
+  alert("Volunteer request saved. Thank you!");
+  e.target.reset();
+});
+</script>
+{% endblock %}
