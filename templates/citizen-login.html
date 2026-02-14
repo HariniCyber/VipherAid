@@ -1,78 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ViperAid - Citizen Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Citizen Login - ViperAid</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body>
+<body class="va-login-bg">
 
-  <nav class="navbar">
-    <div class="nav-container">
-      <a class="logo-section" href="/" aria-label="Go to Home">
-        <div class="logo" aria-hidden="true">🐾</div>
-        <span class="app-name">ViperAid</span>
-      </a>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="va-card p-4 p-lg-5">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <img src="{{ url_for('static', filename='logo.png') }}" class="va-logo-sm" alt="ViperAid">
+          <strong>ViperAid</strong>
+        </div>
 
-      <div class="nav-links">
-        <a href="/report" class="nav-link">Report</a>
-        <a href="/rescue" class="nav-link">Rescue</a>
-        <a href="/donate" class="nav-link">Donate</a>
-        <a href="/about" class="nav-link">About</a>
+        <h1 class="fw-bold mb-2">Welcome Back</h1>
+        <p class="va-soft mb-4">Enter your name to start reporting. No password.</p>
+
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label fw-bold">Name *</label>
+            <input name="name" class="form-control" required placeholder="Harini">
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-bold">Phone (optional)</label>
+            <input name="phone" class="form-control" placeholder="+91 XXXXX XXXXX">
+          </div>
+
+          <button class="va-btn w-100" type="submit">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>Continue to Report
+          </button>
+
+          <div class="d-flex justify-content-between mt-3">
+            <a class="va-soft small" href="/">← Back to Home</a>
+            <a class="va-soft small" href="/report">Skip (open report)</a>
+          </div>
+        </form>
       </div>
     </div>
-  </nav>
-
-  <main class="report-main">
-    <header class="page-header">
-      <h1 class="page-title">Citizen Login</h1>
-      <p class="page-subtitle">
-        Log in to report, donate, and contact faster. (Demo login — no password needed.)
-      </p>
-    </header>
-
-    <section class="form-container">
-      <form method="POST" class="report-form" autocomplete="on">
-        <div class="form-section">
-          <h3 class="form-section-title">Your Details</h3>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="name">Name *</label>
-              <input id="name" name="name" class="form-input" required placeholder="Your full name" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="phone">Phone</label>
-              <input id="phone" name="phone" class="form-input" placeholder="+91 XXXXX XXXXX" />
-              <small class="form-hint">Optional (used only for rescue follow-up).</small>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="email">Email</label>
-            <input id="email" name="email" type="email" class="form-input" placeholder="you@email.com" />
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <a class="btn btn-secondary" href="/">Back</a>
-          <button class="btn btn-primary" type="submit">Enter ViperAid</button>
-        </div>
-
-        <p class="form-note">
-          This is a demo login. For real deployment, we add OTP / password and database users.
-        </p>
-      </form>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2026 ViperAid • Human-first rescue support.</p>
-    </div>
-  </footer>
+  </div>
+</div>
 
 </body>
 </html>
