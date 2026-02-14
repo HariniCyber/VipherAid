@@ -1,52 +1,49 @@
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
-import sqlite3
+from flask import Flask, render_template, request, redirect, session, jsonify, flash
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
-app.secret_key = "viperaid_secret_key_123"
+app.secret_key = "viperaid_expo_final_2026_madurai"
 
-DB = "viperaid.db"
-
-
-# ---------- DB HELPERS ----------
-def get_db():
-    conn = sqlite3.connect(DB)
-    conn.row_factory = sqlite3.Row
-    return conn
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///viperaid.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
 
 
-def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS reports (
-        id TEXT PRIMARY KEY,
-        created_at TEXT NOT NULL,
-        animal_type TEXT NOT NULL,
-        urgency TEXT NOT NULL,
-        location_text TEXT NOT NULL,
-        geo TEXT,
-        description TEXT NOT NULL,
-        reporter_name TEXT,
-        reporter_phone TEXT,
-        status TEXT NOT NULL DEFAULT 'Reported',
-        decision TEXT NOT NULL DEFAULT 'Pending',   -- Pending/Accepted/Rejected
-        assigned_to TEXT DEFAULT ''
-    );
-    """)
-    conn.commit()
-    conn.close()
+class Report(db.Model):
+    id = db.Column(db.String(20), primary_key=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    animal_type = db.Column(db.String(50))
+    urgency = db.Column(db.String(20), default="Medium")
+    location_text = db.Column(db.String(200))
+    geo = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    reporter_name = db.Column(db.String(100))
+    reporter_phone = db.Column(db.String(20))
+    status = db.Column(db.String(20), default="Reported")
+    assigned_to = db.Column(db.String(100))
 
 
-# ---------- PUBLIC PAGES ----------
+with app.app_context():
+    db.create_all()
+
+
+# ---------------- PAGES ----------------
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
 
 @app.route("/report")
-def report_page():
+def report():
     return render_template("report.html")
+
+
+@app.route("/rescue")
+def rescue():
+    if not session.get("rescuer"):
+        return redirect("/rescue-login")
+    return render_template("rescue.html")
 
 
 @app.route("/donate")
@@ -59,140 +56,135 @@ def about():
     return render_template("about.html")
 
 
-# ---------- LOGIN ----------
-@app.route("/login", methods=["GET", "POST"])
-def login_citizen():
+@app.route("/volunteer")
+def volunteer():
+    return render_template("volunteer.html")
+
+
+@app.route("/ambulance")
+def ambulance():
+    return render_template("ambulance.html")
+
+
+# ---------------- LOGIN (not shown in navbar/index body) ----------------
+@app.route("/citizen-login", methods=["GET", "POST"])
+def citizen_login():
     if request.method == "POST":
-        session["role"] = "citizen"
-        session["name"] = request.form.get("name", "").strip()
-        return redirect(url_for("home"))
-    return render_template("login_citizen.html")
+        name = request.form.get("name", "").strip()
+        phone = request.form.get("phone", "").strip()
+
+        if not name:
+            flash("Please enter your name")
+            return redirect("/citizen-login")
+
+        session["citizen_name"] = name
+        if phone:
+            session["citizen_phone"] = phone
+
+        return redirect("/report")
+
+    return render_template("citizen-login.html")
 
 
 @app.route("/rescue-login", methods=["GET", "POST"])
-def login_rescuer():
+def rescue_login():
     if request.method == "POST":
         org = request.form.get("org", "").strip()
         code = request.form.get("code", "").strip()
 
         if code == "VIPERNGO":
-            session["role"] = "rescuer"
-            session["org"] = org
-            return redirect(url_for("rescue"))  # ✅ goes to dashboard
-        return render_template("login_rescuer.html", error="Invalid NGO access code")
+            session["rescuer"] = True
+            session["org"] = org or "NGO"
+            return redirect("/rescue")
 
-    return render_template("login_rescuer.html")
+        flash("Invalid NGO code. Try: VIPERNGO")
+        return redirect("/rescue-login")
+
+    return render_template("rescue-login.html")
 
 
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("home"))
+    return redirect("/")
 
 
-# ---------- PROTECTED DASHBOARD ----------
-@app.route("/rescue")
-def rescue():
-    if session.get("role") != "rescuer":
-        return redirect(url_for("login_rescuer"))
-    return render_template("rescue.html")
-
-
-# ---------- API: CREATE REPORT (from report.html) ----------
+# ---------------- APIs ----------------
 @app.route("/api/report", methods=["POST"])
 def api_create_report():
-    data = request.get_json(force=True)
+    data = request.json or {}
 
-    # Required fields
-    animal_type = (data.get("animalType") or "").strip()
-    urgency = (data.get("urgency") or "").strip()
-    location_text = (data.get("locationText") or "").strip()
-    description = (data.get("description") or "").strip()
+    report = Report(
+        id=f"VA{int(datetime.now().timestamp())}",
+        animal_type=data.get("animalType"),
+        urgency=data.get("urgency", "Medium"),
+        location_text=data.get("locationText"),
+        geo=data.get("geo"),
+        description=data.get("description"),
+        reporter_name=data.get("reporterName") or session.get("citizen_name"),
+        reporter_phone=data.get("reporterPhone") or session.get("citizen_phone"),
+        status="Reported",
+        assigned_to=""
+    )
+    db.session.add(report)
+    db.session.commit()
 
-    if not (animal_type and urgency and location_text and description):
-        return jsonify({"ok": False, "error": "Missing required fields"}), 400
-
-    report_id = "VA-" + str(int(datetime.utcnow().timestamp() * 1000))
-    created_at = datetime.utcnow().isoformat(timespec="seconds") + "Z"
-
-    geo = (data.get("geo") or "").strip()
-    reporter_name = (data.get("reporterName") or "").strip()
-    reporter_phone = (data.get("reporterPhone") or "").strip()
-
-    conn = get_db()
-    cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO reports (id, created_at, animal_type, urgency, location_text, geo, description, reporter_name, reporter_phone)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (report_id, created_at, animal_type, urgency, location_text, geo, description, reporter_name, reporter_phone))
-    conn.commit()
-    conn.close()
-
-    return jsonify({"ok": True, "id": report_id})
+    return jsonify({"success": True, "id": report.id})
 
 
-# ---------- API: LIST REPORTS (for rescue dashboard) ----------
-@app.route("/api/reports", methods=["GET"])
-def api_list_reports():
-    if session.get("role") != "rescuer":
-        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+@app.route("/api/reports")
+def api_reports():
+    if not session.get("rescuer"):
+        return jsonify({"error": "Unauthorized"}), 403
 
-    conn = get_db()
-    rows = conn.execute("SELECT * FROM reports ORDER BY created_at DESC").fetchall()
-    conn.close()
+    reports = Report.query.order_by(Report.created_at.desc()).limit(100).all()
+    return jsonify([{
+        "id": r.id,
+        "animalType": r.animal_type,
+        "urgency": r.urgency,
+        "locationText": r.location_text,
+        "geo": r.geo,
+        "description": r.description,
+        "status": r.status,
+        "createdAt": r.created_at.isoformat(),
+        "reporterName": r.reporter_name,
+        "reporterPhone": r.reporter_phone,
+        "assignedTo": r.assigned_to
+    } for r in reports])
 
-    reports = [dict(r) for r in rows]
-    return jsonify({"ok": True, "reports": reports})
 
-
-# ---------- API: UPDATE STATUS / DECISION ----------
-@app.route("/api/report/<report_id>/update", methods=["POST"])
+@app.route("/api/report/<report_id>", methods=["POST"])
 def api_update_report(report_id):
-    if session.get("role") != "rescuer":
-        return jsonify({"ok": False, "error": "Unauthorized"}), 401
+    if not session.get("rescuer"):
+        return jsonify({"error": "Unauthorized"}), 403
 
-    data = request.get_json(force=True)
-    status = (data.get("status") or "").strip()
-    decision = (data.get("decision") or "").strip()
-    assigned_to = (data.get("assignedTo") or "").strip()
+    report = Report.query.get_or_404(report_id)
+    data = request.json or {}
 
-    # allow only safe values
-    allowed_status = {"Reported", "Accepted", "In Progress", "Completed"}
-    allowed_decision = {"Pending", "Accepted", "Rejected"}
+    if "status" in data:
+        report.status = data["status"]
+    if "assignedTo" in data:
+        report.assigned_to = data["assignedTo"]
 
-    if status and status not in allowed_status:
-        return jsonify({"ok": False, "error": "Invalid status"}), 400
-    if decision and decision not in allowed_decision:
-        return jsonify({"ok": False, "error": "Invalid decision"}), 400
+    db.session.commit()
+    return jsonify({"success": True})
 
-    conn = get_db()
-    cur = conn.cursor()
 
-    # Build dynamic update
-    fields = []
-    params = []
+@app.route("/api/report/<report_id>", methods=["DELETE"])
+def api_delete_report(report_id):
+    if not session.get("rescuer"):
+        return jsonify({"error": "Unauthorized"}), 403
 
-    if status:
-        fields.append("status=?")
-        params.append(status)
-    if decision:
-        fields.append("decision=?")
-        params.append(decision)
-    if assigned_to is not None:
-        fields.append("assigned_to=?")
-        params.append(assigned_to)
+    report = Report.query.get_or_404(report_id)
+    db.session.delete(report)
+    db.session.commit()
+    return jsonify({"success": True})
 
-    if not fields:
-        return jsonify({"ok": False, "error": "Nothing to update"}), 400
 
-    params.append(report_id)
-    cur.execute(f"UPDATE reports SET {', '.join(fields)} WHERE id=?", params)
-    conn.commit()
-    conn.close()
-
-    return jsonify({"ok": True})
+@app.route("/favicon.ico")
+def favicon():
+    return "", 204
 
 
 if __name__ == "__main__":
-    init_db()
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5000)
