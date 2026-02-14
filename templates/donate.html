@@ -1,184 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ViperAid - Donate</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Donate - ViperAid{% endblock %}
 
-  <nav class="navbar">
-    <div class="nav-container">
-      <a class="logo-section" href="/" aria-label="Go to Home">
-        <div class="logo" aria-hidden="true">🐾</div>
-        <span class="app-name">ViperAid</span>
-      </a>
-      <div class="nav-links">
-        <a href="/rescue" class="nav-link">Rescue</a>
-        <a href="/report" class="nav-link">Report</a>
-        <a href="/donate" class="nav-link nav-active">Donate</a>
-        <a href="/about" class="nav-link">About</a>
-      </div>
-    </div>
-  </nav>
+{% block content %}
+<section class="py-5">
+  <div class="container py-3">
+    <div class="row g-4">
+      <div class="col-lg-7">
+        <div class="va-card p-4 p-lg-5 h-100">
+          <h1 class="fw-bold mb-2">Donate to Save Lives</h1>
+          <p class="va-soft mb-4">Supports transport, vet care, shelter and recovery.</p>
 
-  <main class="donate-main">
-    <header class="page-header">
-      <h1 class="page-title">Donate to Save Lives</h1>
-      <p class="page-subtitle">
-        Your donation supports rescue transport, veterinary care, shelter, food, and rehabilitation.
-      </p>
-    </header>
-
-    <section class="donate-container">
-
-      <div class="donate-left">
-        <article class="cost-breakdown">
-          <h2 class="section-heading">Where Your Money Goes</h2>
-          <div class="cost-items">
-            <div class="cost-item">
-              <div class="cost-icon">🚑</div>
-              <div class="cost-details">
-                <h3 class="cost-title">Rescue Transport</h3>
-                <p class="cost-description">Fuel, ambulance/auto support, rescue tools.</p>
-                <span class="cost-amount">₹300 - ₹1,500</span>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
+                <div class="fw-bold">🚑 Rescue Transport</div>
+                <div class="va-soft">₹300 – ₹1,500</div>
               </div>
             </div>
-
-            <div class="cost-item">
-              <div class="cost-icon">⚕️</div>
-              <div class="cost-details">
-                <h3 class="cost-title">Medical Care</h3>
-                <p class="cost-description">First aid, surgery, medicines, vaccinations.</p>
-                <span class="cost-amount">₹800 - ₹6,000</span>
+            <div class="col-md-6">
+              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
+                <div class="fw-bold">⚕️ Medical Care</div>
+                <div class="va-soft">₹800 – ₹6,000</div>
               </div>
             </div>
-
-            <div class="cost-item">
-              <div class="cost-icon">🏠</div>
-              <div class="cost-details">
-                <h3 class="cost-title">Shelter & Recovery</h3>
-                <p class="cost-description">Temporary shelter, bedding, hygiene and rehab.</p>
-                <span class="cost-amount">₹300 - ₹1,000/month</span>
+            <div class="col-md-6">
+              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
+                <div class="fw-bold">🏠 Shelter</div>
+                <div class="va-soft">₹300 – ₹1,000/month</div>
               </div>
             </div>
-
-            <div class="cost-item">
-              <div class="cost-icon">🍖</div>
-              <div class="cost-details">
-                <h3 class="cost-title">Food & Nutrition</h3>
-                <p class="cost-description">Diet support for injured + recovering animals.</p>
-                <span class="cost-amount">₹200 - ₹700/month</span>
-              </div>
-            </div>
-
-            <div class="cost-item">
-              <div class="cost-icon">🧩</div>
-              <div class="cost-details">
-                <h3 class="cost-title">Platform Maintenance</h3>
-                <p class="cost-description">Keeping ViperAid online and improving features.</p>
-                <span class="cost-amount">Project-based</span>
+            <div class="col-md-6">
+              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
+                <div class="fw-bold">🍖 Food</div>
+                <div class="va-soft">₹200 – ₹700/month</div>
               </div>
             </div>
           </div>
-        </article>
-      </div>
 
-      <div class="donate-right">
-        <div class="donation-form-card">
-          <h2 class="form-heading">Scan & Pay</h2>
-
-          <div class="qr-section">
-            <div class="qr-code-container">
-              <div class="qr-placeholder">
-                <svg viewBox="0 0 200 200" class="qr-svg" aria-label="QR Placeholder">
-                  <rect width="200" height="200" fill="#fff"/>
-                  <rect x="10" y="10" width="60" height="60" fill="#000"/>
-                  <rect x="130" y="10" width="60" height="60" fill="#000"/>
-                  <rect x="10" y="130" width="60" height="60" fill="#000"/>
-                  <rect x="90" y="90" width="20" height="20" fill="#000"/>
-                  <rect x="100" y="110" width="40" height="40" fill="#000"/>
-                </svg>
-              </div>
-              <p class="qr-text">UPI ID: viperaid@upi</p>
-            </div>
-          </div>
-
-          <div class="form-divider"><span class="divider-text">OR</span></div>
-
-          <form id="donationForm" class="donation-form">
-            <div class="form-group">
-              <label class="form-label" for="donorName">Name *</label>
-              <input id="donorName" name="donorName" class="form-input" required placeholder="Full name" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="donorEmail">Email *</label>
-              <input id="donorEmail" name="donorEmail" type="email" class="form-input" required placeholder="you@email.com" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="donorPhone">Phone *</label>
-              <input id="donorPhone" name="donorPhone" class="form-input" required placeholder="+91 XXXXX XXXXX" />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="amount">Amount (₹) *</label>
-              <div class="amount-input-group">
-                <span class="currency-symbol">₹</span>
-                <input id="amount" name="amount" type="number" min="50" class="form-input amount-input" required placeholder="0" />
-              </div>
-            </div>
-
-            <div class="suggested-amounts">
-              <button type="button" class="amount-btn" data-amt="200">₹200</button>
-              <button type="button" class="amount-btn" data-amt="500">₹500</button>
-              <button type="button" class="amount-btn" data-amt="1000">₹1,000</button>
-              <button type="button" class="amount-btn" data-amt="2000">₹2,000</button>
-            </div>
-
-
-            <button type="submit" class="btn btn-primary btn-donate">💝 Save Donation</button>
-            
-          </form>
         </div>
       </div>
 
-    </section>
-  </main>
+      <div class="col-lg-5">
+        <div class="va-card p-4 p-lg-5">
+          <h3 class="fw-bold mb-3">Scan & Pay</h3>
+          <div class="p-4 rounded-4 text-center" style="background: var(--card2); border:1px solid var(--border);">
+            <div class="fw-bold">UPI ID: viperaid@upi</div>
+            <div class="va-soft small mt-2">(QR placeholder for expo)</div>
+          </div>
 
-  <footer class="footer">
-    <div class="footer-content">
-      <p>&copy; 2026 ViperAid • Thank you for helping.</p>
+          <hr class="opacity-25 my-4">
+
+          <form id="donForm">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Name *</label>
+              <input id="dName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Email *</label>
+              <input id="dEmail" class="form-control" type="email" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Phone *</label>
+              <input id="dPhone" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Amount (₹) *</label>
+              <input id="dAmt" class="form-control" type="number" min="50" required>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              <button type="button" class="va-btn-outline" onclick="dAmt.value=200">₹200</button>
+              <button type="button" class="va-btn-outline" onclick="dAmt.value=500">₹500</button>
+              <button type="button" class="va-btn-outline" onclick="dAmt.value=1000">₹1000</button>
+              <button type="button" class="va-btn-outline" onclick="dAmt.value=2000">₹2000</button>
+            </div>
+
+            <button class="va-btn w-100" type="submit"><i class="fa-solid fa-heart"></i>Save Donation</button>
+          </form>
+
+          <div class="va-soft small mt-3">(Demo) Saves locally in browser.</div>
+        </div>
+      </div>
+
     </div>
-  </footer>
+  </div>
+</section>
+{% endblock %}
 
-  <script>
-    document.querySelectorAll(".amount-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.getElementById("amount").value = btn.dataset.amt;
-      });
-    });
-
-    document.getElementById("donationForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const donation = {
-        name: donorName.value.trim(),
-        email: donorEmail.value.trim(),
-        phone: donorPhone.value.trim(),
-        amount: Number(amount.value),
-        createdAt: new Date().toISOString()
-      };
-
-      const donations = JSON.parse(localStorage.getItem("viperaid_donations") || "[]");
-      donations.unshift(donation);
-      localStorage.setItem("viperaid_donations", JSON.stringify(donations));
-
-      alert("Donation info saved. Thank you!");
-      e.target.reset();
-    });
-  </script>
-
-</body>
-</html>
+{% block scripts %}
+<script>
+document.getElementById("donForm").addEventListener("submit",(e)=>{
+  e.preventDefault();
+  const donation = {
+    name: dName.value.trim(),
+    email: dEmail.value.trim(),
+    phone: dPhone.value.trim(),
+    amount: Number(dAmt.value),
+    createdAt: new Date().toISOString()
+  };
+  const list = JSON.parse(localStorage.getItem("viperaid_donations") || "[]");
+  list.unshift(donation);
+  localStorage.setItem("viperaid_donations", JSON.stringify(list));
+  alert("Donation info saved. Thank you!");
+  e.target.reset();
+});
+</script>
+{% endblock %}
