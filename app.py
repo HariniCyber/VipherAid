@@ -10,7 +10,7 @@ import os, json, base64, math, io, uuid
 app = Flask(__name__)
 app.secret_key = "vipheraid_expo_final_2026_madurai"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///viperaid.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://neondb_owner:npg_ITNU4Oc2EQfd@ep-billowing-unit-amvksfur-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
