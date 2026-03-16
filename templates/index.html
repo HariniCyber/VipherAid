@@ -1,81 +1,387 @@
 {% extends "base.html" %}
-{% block title %}VipherAid — Report • Save • Rescue{% endblock %}
+{% block title %}VipherAid | Save Animal Lives{% endblock %}
 
 {% block content %}
-<section class="py-5">
-  <div class="container py-3">
-    <div class="row g-4 align-items-center">
-      <div class="col-lg-7">
-        <div class="va-card p-4 p-lg-5">
-          <div class="badge-soft d-inline-flex align-items-center gap-2 mb-3">
-            <i class="fa-solid fa-bolt"></i>
-            <span>Human-first rescue network</span>
-          </div>
 
-          <h1 class="display-5 fw-bold mb-3">
-            Found an injured street animal?
-            <span style="color: var(--brand);">Report in 60 seconds.</span>
-          </h1>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-          <p class="va-soft fs-5 mb-4">
-            VipherAid connects citizens and rescue teams — urgency + location + clear description
-            helps faster action and calmer coordination.
-          </p>
+<section class="hero">
 
-          <div class="d-flex flex-wrap gap-2">
-            <a class="va-btn" href="/report"><i class="fa-solid fa-triangle-exclamation"></i>Report Now</a>
-            <a class="va-btn-outline" href="/rescue"><i class="fa-solid fa-list-check"></i>Rescue Dashboard</a>
-            <a class="va-btn-outline" href="/ambulance"><i class="fa-solid fa-truck-medical"></i>Vehicle Help</a>
-            <a class="va-btn-outline" href="/volunteer"><i class="fa-solid fa-handshake-angle"></i>Volunteer</a>
-          </div>
+<div class="hero-container">
 
-          <div class="row g-3 mt-4">
-            <div class="col-md-4">
-              <div class="p-3 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">01 • Report</div>
-                <div class="va-soft">Urgency + location</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="p-3 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">02 • Accept</div>
-                <div class="va-soft">NGO picks case</div>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="p-3 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">03 • Track</div>
-                <div class="va-soft">Live status updates</div>
-              </div>
-            </div>
-          </div>
+<div class="hero-left">
 
-        </div>
-      </div>
+<div class="badge">🐾 Animal Rescue Network</div>
 
-      <div class="col-lg-5">
-        <div class="va-card p-4 p-lg-5">
-          <h3 class="fw-bold mb-3">What makes ViperAid different</h3>
-          <ul class="va-soft mb-4">
-            <li class="mb-2">Structured reporting (no chaos, no missing info)</li>
-            <li class="mb-2">Urgency-based rescue priority</li>
-            <li class="mb-2">Real-time dashboard updates</li>
-            <li class="mb-2">Community support: donors, volunteers, transport</li>
-          </ul>
+<h1 class="hero-title">
+Every second counts.<br>
+<span class="gradient">Save an animal now.</span>
+</h1>
 
-          <div class="p-3 rounded-4" style="background: rgba(20,184,166,0.10); border:1px solid rgba(20,184,166,0.18);">
-            <div class="fw-bold mb-1">Quick tip</div>
-            <div class="va-soft">Landmark + clear description helps rescuers more than just GPS.</div>
-          </div>
+<h3 class="hero-sub">
+See an animal in distress?
+</h3>
 
-          <div class="d-flex flex-wrap gap-2 mt-4">
-            <a class="va-btn" href="/donate"><i class="fa-solid fa-heart"></i>Donate</a>
-            <a class="va-btn-outline" href="/about"><i class="fa-solid fa-circle-info"></i>About</a>
-          </div>
-        </div>
-      </div>
 
-    </div>
-  </div>
+<!-- EMERGENCY BUTTON -->
+
+<div class="emergency-wrapper">
+
+<a href="/emergency" class="btn-emergency pulse">
+
+<i class="fa-solid fa-phone-volume"></i>
+Emergency Call
+
+</a>
+
+</div>
+
+
+
+<div class="secondary-buttons">
+
+<a href="/report" class="btn-report">
+
+<i class="fa-solid fa-file-circle-plus"></i>
+Regular Report
+
+</a>
+
+<a href="/shelter" class="btn-shelter">
+
+<i class="fa-solid fa-house-medical"></i>
+Find Shelter
+
+</a>
+
+</div>
+
+
+
+<div class="tech-pill-container">
+
+<span class="tech-pill">
+<i class="fa-solid fa-location-crosshairs"></i>
+Precision GPS
+</span>
+
+<span class="tech-pill">
+<i class="fa-solid fa-map-location-dot"></i>
+Live Map Routing
+</span>
+
+<span class="tech-pill">
+<i class="fa-solid fa-chart-line"></i>
+Live Dashboard
+</span>
+
+</div>
+
+</div>
+
+
+
+<div class="hero-right">
+
+<div class="rescue-card">
+
+<div class="card-icon">
+<i class="fa-solid fa-paw"></i>
+</div>
+
+<h2>Animal Rescue Platform</h2>
+
+<p>
+Report injured animals and instantly connect with nearby rescue NGOs.
+VipherAid helps volunteers save lives faster using smart rescue technology.
+</p>
+
+<div class="card-stats">
+
+<div class="stat">
+<h3>24/7</h3>
+<span>Emergency Support</span>
+</div>
+
+<div class="stat">
+<h3>Fast</h3>
+<span>Response</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
+
+
+
+<section class="how-section">
+
+<h2 class="section-title">How VipherAid Works</h2>
+
+<div class="steps">
+
+<div class="step">
+
+<div class="step-icon">
+<i class="fa-solid fa-phone"></i>
+</div>
+
+<h3>Emergency Call</h3>
+
+<p>Contact the nearest rescue team instantly.</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-icon">
+<i class="fa-solid fa-location-dot"></i>
+</div>
+
+<h3>Share Location</h3>
+
+<p>GPS allows rescuers to locate the animal quickly.</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-icon">
+<i class="fa-solid fa-truck-medical"></i>
+</div>
+
+<h3>Animal Rescued</h3>
+
+<p>Rescue volunteers reach the spot and help the animal.</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<style>
+
+.hero{
+padding:110px 20px;
+background:linear-gradient(180deg,#fff7ed,#ffffff,#fff7ed);
+}
+
+.hero-container{
+display:flex;
+align-items:center;
+justify-content:space-between;
+max-width:1200px;
+margin:auto;
+gap:60px;
+flex-wrap:wrap;
+}
+
+.hero-left{
+flex:1;
+min-width:320px;
+}
+
+.hero-right{
+flex:1;
+display:flex;
+justify-content:center;
+}
+
+.badge{
+background:#ffedd5;
+color:#c2410c;
+padding:6px 14px;
+border-radius:20px;
+font-size:14px;
+display:inline-block;
+margin-bottom:15px;
+}
+
+.hero-title{
+font-size:52px;
+font-weight:800;
+line-height:1.2;
+}
+
+.gradient{
+background:linear-gradient(90deg,#ef4444,#f59e0b);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.hero-sub{
+font-size:24px;
+margin:20px 0 30px 0;
+color:#374151;
+}
+
+
+
+
+.emergency-wrapper{
+margin-bottom:20px;
+}
+
+.btn-emergency{
+display:inline-flex;
+align-items:center;
+gap:12px;
+background:linear-gradient(90deg,#ef4444,#dc2626);
+color:white;
+padding:24px 55px;
+border-radius:16px;
+text-decoration:none;
+font-weight:800;
+font-size:24px;
+box-shadow:0 15px 45px rgba(220,38,38,0.45);
+transition:0.3s;
+}
+
+.btn-emergency:hover{
+transform:scale(1.08);
+box-shadow:0 20px 60px rgba(220,38,38,0.55);
+}
+
+
+
+
+.pulse{
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%{box-shadow:0 0 0 0 rgba(239,68,68,0.6);}
+70%{box-shadow:0 0 0 20px rgba(239,68,68,0);}
+100%{box-shadow:0 0 0 0 rgba(239,68,68,0);}
+}
+
+
+
+
+.secondary-buttons{
+display:flex;
+gap:12px;
+margin-bottom:30px;
+}
+
+.btn-report{
+display:flex;
+align-items:center;
+gap:8px;
+background:#2563eb;
+color:white;
+padding:14px 22px;
+border-radius:10px;
+text-decoration:none;
+font-weight:600;
+}
+
+.btn-shelter{
+display:flex;
+align-items:center;
+gap:8px;
+background:#16a34a;
+color:white;
+padding:14px 22px;
+border-radius:10px;
+text-decoration:none;
+font-weight:600;
+}
+
+
+
+
+.tech-pill-container{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.tech-pill{
+background:#f1f5f9;
+padding:8px 14px;
+border-radius:20px;
+font-size:14px;
+display:flex;
+align-items:center;
+gap:6px;
+}
+
+
+
+
+.rescue-card{
+background:white;
+padding:40px;
+border-radius:18px;
+box-shadow:0 15px 45px rgba(0,0,0,0.08);
+max-width:360px;
+text-align:center;
+}
+
+.card-icon{
+font-size:42px;
+margin-bottom:10px;
+color:#f97316;
+}
+
+.card-stats{
+display:flex;
+justify-content:space-around;
+margin-top:20px;
+}
+
+.stat h3{
+margin:0;
+font-size:22px;
+}
+
+.stat span{
+font-size:13px;
+color:#6b7280;
+}
+
+
+
+
+
+.how-section{
+padding:80px 20px;
+text-align:center;
+background:#fff7ed;
+}
+
+.section-title{
+font-size:36px;
+margin-bottom:40px;
+}
+
+.steps{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+}
+
+.step{
+max-width:250px;
+}
+
+.step-icon{
+font-size:40px;
+margin-bottom:10px;
+color:#f97316;
+}
+
+</style>
+
 {% endblock %}
