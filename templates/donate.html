@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Donate - ViperAid{% endblock %}
+{% block title %}Donate - VipherAid{% endblock %}
 
 {% block content %}
 <section class="py-5">
@@ -44,8 +44,14 @@
         <div class="va-card p-4 p-lg-5">
           <h3 class="fw-bold mb-3">Scan & Pay</h3>
           <div class="p-4 rounded-4 text-center" style="background: var(--card2); border:1px solid var(--border);">
-            <div class="fw-bold">UPI ID: vipheraid@upi</div>
-            <div class="va-soft small mt-2">(QR placeholder for expo)</div>
+            <div class="fw-bold">UPI ID: charannithi2429@oksbi</div>
+
+            <div class="va-soft small mt-2"></div>
+            <div id="qrcode" class="d-flex justify-content-center my-2"></div>
+            <div class="d-flex justify-content-center gap-2">
+              <button id="copyUpi" class="va-btn-outline small">Copy UPI</button>
+              <button id="refreshQr" class="va-btn-outline small">Refresh QR</button>
+            </div>
           </div>
 
           <hr class="opacity-25 my-4">
@@ -88,6 +94,8 @@
 {% endblock %}
 
 {% block scripts %}
+<!-- QR library (client-side) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 document.getElementById("donForm").addEventListener("submit",(e)=>{
   e.preventDefault();
@@ -98,11 +106,50 @@ document.getElementById("donForm").addEventListener("submit",(e)=>{
     amount: Number(dAmt.value),
     createdAt: new Date().toISOString()
   };
-  const list = JSON.parse(localStorage.getItem("viperaid_donations") || "[]");
+  const list = JSON.parse(localStorage.getItem("vipheraid_donations") || "[]");
   list.unshift(donation);
-  localStorage.setItem("viperaid_donations", JSON.stringify(list));
+  localStorage.setItem("vipheraid_donations", JSON.stringify(list));
   alert("Donation info saved. Thank you!");
   e.target.reset();
+  renderQr();
 });
+
+// UPI details
+const UPI_ID = 'charannithi2429@oksbi';
+const UPI_PNAME = 'VipherAid';
+
+function buildUpiLink(amount){
+  let link = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_PNAME)}&cu=INR`;
+  if(amount && Number(amount) > 0) link += `&am=${encodeURIComponent(Number(amount).toFixed(2))}`;
+  return link;
+}
+
+let qr;
+function renderQr(){
+  const amt = Number(dAmt.value) || 0;
+  const text = buildUpiLink(amt);
+  const container = document.getElementById('qrcode');
+  container.innerHTML = '';
+  qr = new QRCode(container, { text, width: 180, height: 180 });
+}
+
+// initial render
+renderQr();
+
+// update QR when amount changes
+document.getElementById('dAmt').addEventListener('input', ()=>{
+  renderQr();
+});
+
+// copy UPI link to clipboard
+document.getElementById('copyUpi').addEventListener('click', async ()=>{
+  const amt = Number(dAmt.value) || 0;
+  const upi = buildUpiLink(amt);
+  try{ await navigator.clipboard.writeText(upi); alert('UPI link copied'); }
+  catch(e){ prompt('Copy UPI link', upi); }
+});
+
+// refresh QR manually
+document.getElementById('refreshQr').addEventListener('click', renderQr);
 </script>
 {% endblock %}
