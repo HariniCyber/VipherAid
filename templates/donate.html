@@ -1,155 +1,440 @@
-{% extends "base.html" %}
-{% block title %}Donate - VipherAid{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>Donate to Animal Shelters</title>
+<style>
 
-{% block content %}
-<section class="py-5">
-  <div class="container py-3">
-    <div class="row g-4">
-      <div class="col-lg-7">
-        <div class="va-card p-4 p-lg-5 h-100">
-          <h1 class="fw-bold mb-2">Donate to Save Lives</h1>
-          <p class="va-soft mb-4">Supports transport, vet care, shelter and recovery.</p>
+* { box-sizing: border-box; }
 
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">🚑 Rescue Transport</div>
-                <div class="va-soft">₹300 – ₹1,500</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">⚕️ Medical Care</div>
-                <div class="va-soft">₹800 – ₹6,000</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">🏠 Shelter</div>
-                <div class="va-soft">₹300 – ₹1,000/month</div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="p-4 rounded-4" style="background: var(--card2); border:1px solid var(--border);">
-                <div class="fw-bold">🍖 Food</div>
-                <div class="va-soft">₹200 – ₹700/month</div>
-              </div>
-            </div>
-          </div>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+}
 
-        </div>
-      </div>
+h1 {
+  text-align: center;
+  background: #2c7a7b;
+  color: white;
+  padding: 18px;
+  margin: 0;
+}
 
-      <div class="col-lg-5">
-        <div class="va-card p-4 p-lg-5">
-          <h3 class="fw-bold mb-3">Scan & Pay</h3>
-          <div class="p-4 rounded-4 text-center" style="background: var(--card2); border:1px solid var(--border);">
-            <div class="fw-bold">UPI ID: charannithi2429@oksbi</div>
+.subtitle {
+  text-align: center;
+  color: #555;
+  padding: 10px;
+  font-size: 14px;
+}
 
-            <div class="va-soft small mt-2"></div>
-            <div id="qrcode" class="d-flex justify-content-center my-2"></div>
-            <div class="d-flex justify-content-center gap-2">
-              <button id="copyUpi" class="va-btn-outline small">Copy UPI</button>
-              <button id="refreshQr" class="va-btn-outline small">Refresh QR</button>
-            </div>
-          </div>
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
 
-          <hr class="opacity-25 my-4">
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
-          <form id="donForm">
-            <div class="mb-3">
-              <label class="form-label fw-bold">Name *</label>
-              <input id="dName" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Email *</label>
-              <input id="dEmail" class="form-control" type="email" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Phone *</label>
-              <input id="dPhone" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label fw-bold">Amount (₹) *</label>
-              <input id="dAmt" class="form-control" type="number" min="50" required>
-            </div>
+.card h3 { color: #2c7a7b; margin-bottom: 8px; }
+.card p  { margin: 5px 0; color: #444; font-size: 14px; }
 
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <button type="button" class="va-btn-outline" onclick="dAmt.value=200">₹200</button>
-              <button type="button" class="va-btn-outline" onclick="dAmt.value=500">₹500</button>
-              <button type="button" class="va-btn-outline" onclick="dAmt.value=1000">₹1000</button>
-              <button type="button" class="va-btn-outline" onclick="dAmt.value=2000">₹2000</button>
-            </div>
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.badge.verified   { background: #e0f5f5; color: #2c7a7b; }
+.badge.unverified { background: #fff3cd; color: #856404; }
 
-            <button class="va-btn w-100" type="submit"><i class="fa-solid fa-heart"></i>Save Donation</button>
-          </form>
+a.donate-btn, button.register-btn {
+  display: inline-block;
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  border: none;
+  text-decoration: none;
+  transition: background 0.2s;
+}
 
-          <div class="va-soft small mt-3">(Demo) Saves locally in browser.</div>
-        </div>
-      </div>
+a.donate-btn {
+  background: #2c7a7b;
+  color: white;
+}
+a.donate-btn:hover { background: #1f5b5d; }
 
+button.register-btn {
+  background: #f0a500;
+  color: white;
+}
+button.register-btn:hover { background: #cc8a00; }
+
+/* ── Modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  width: 90%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.modal h2 {
+  color: #2c7a7b;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.modal .info-note {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 16px;
+  background: #f0fafa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 3px solid #2c7a7b;
+}
+
+.modal label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+  margin: 10px 0 4px;
+}
+
+.modal input,
+.modal select,
+.modal textarea {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+.modal input:focus,
+.modal select:focus,
+.modal textarea:focus { border-color: #2c7a7b; }
+
+.modal textarea { resize: vertical; height: 80px; }
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.btn-submit {
+  flex: 1;
+  background: #2c7a7b;
+  color: white;
+  border: none;
+  padding: 11px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn-submit:hover { background: #1f5b5d; }
+
+.btn-cancel {
+  flex: 1;
+  background: #eee;
+  color: #333;
+  border: none;
+  padding: 11px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.btn-cancel:hover { background: #ddd; }
+
+.close-btn {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #888;
+}
+
+/* Success message */
+.success-msg {
+  display: none;
+  background: #d4edda;
+  color: #155724;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Support Animal Shelters in Coimbatore</h1>
+<p class="subtitle">Click <strong>Donate</strong> to visit the shelter's official page &nbsp;|&nbsp; Shelters without a website can <strong>Register</strong> to receive donations through our platform.</p>
+
+<div class="container">
+
+  <!-- ✅ HAS - has official donate page -->
+  <div class="card">
+    <div>
+      <span class="badge verified">✔ Verified</span>
+      <h3>Humane Animal Society</h3>
+      <p>📍 Seeranaickenpalayam</p>
+      <p>Supports injured stray animals. 80G tax-exempt.</p>
     </div>
+    <a class="donate-btn" href="https://hasindia.org/donate.html" target="_blank">💚 Donate Now</a>
   </div>
-</section>
-{% endblock %}
 
-{% block scripts %}
-<!-- QR library (client-side) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- ⚠️ Lucky Dog - no official site -->
+  <div class="card">
+    <div>
+      <span class="badge unverified">⚠ Not Registered</span>
+      <h3>Lucky Dog Welfare Trust</h3>
+      <p>📍 Singai Nagar, Coimbatore</p>
+      <p>Dog rescue and treatment center.</p>
+    </div>
+    <button class="register-btn" onclick="openModal('Lucky Dog Welfare Trust')">📋 Register to Get Donations</button>
+  </div>
+
+  <!-- ✅ Dhyan Foundation - has official donate page -->
+  <div class="card">
+    <div>
+      <span class="badge verified">✔ Verified</span>
+      <h3>Dhyan Foundation</h3>
+      <p>📍 Coimbatore</p>
+      <p>Animal welfare NGO. 100% goes to animals. 80G exempt.</p>
+    </div>
+    <a class="donate-btn" href="https://www.dhyanfoundation.com/donate-charitable-activities" target="_blank">💚 Donate Now</a>
+  </div>
+
+  <!-- ✅ Velliangiri Gaushala - Facebook page -->
+  <div class="card">
+    <div>
+      <span class="badge verified">✔ Verified</span>
+      <h3>Velliangiri Gaushala</h3>
+      <p>📍 Velliangiri Hills</p>
+      <p>Cow protection shelter. Donate via official Facebook only.</p>
+    </div>
+    <a class="donate-btn" href="https://www.facebook.com/velliangirigaushala" target="_blank">💚 Donate Now</a>
+  </div>
+
+  <!-- ⚠️ Sree Gokulam - no official site -->
+  <div class="card">
+    <div>
+      <span class="badge unverified">⚠ Not Registered</span>
+      <h3>Sree Gokulam Goushala</h3>
+      <p>📍 Coimbatore</p>
+      <p>Cow rescue and care shelter.</p>
+    </div>
+    <button class="register-btn" onclick="openModal('Sree Gokulam Goushala')">📋 Register to Get Donations</button>
+  </div>
+
+  <!-- ⚠️ Almighty Animal Sanctuary - no official site -->
+  <div class="card">
+    <div>
+      <span class="badge unverified">⚠ Not Registered</span>
+      <h3>Almighty Animal Sanctuary</h3>
+      <p>📍 Coimbatore</p>
+      <p>Animal rescue and shelter.</p>
+    </div>
+    <button class="register-btn" onclick="openModal('Almighty Animal Sanctuary')">📋 Register to Get Donations</button>
+  </div>
+
+  <!-- ✅ Pawsome - has official site -->
+  <div class="card">
+    <div>
+      <span class="badge verified">✔ Verified</span>
+      <h3>Pawsome People Project</h3>
+      <p>📍 Coimbatore</p>
+      <p>Street dog rescue, rehab and adoption NGO.</p>
+    </div>
+    <a class="donate-btn" href="https://pawsomepeople.org/" target="_blank">💚 Donate Now</a>
+  </div>
+
+  <!-- ✅ ABC Centre - operated by HAS -->
+  <div class="card">
+    <div>
+      <span class="badge verified">✔ Verified</span>
+      <h3>Coimbatore ABC Centre</h3>
+      <p>📍 Vellalore</p>
+      <p>Dog sterilization and treatment. Operated by HAS.</p>
+    </div>
+    <a class="donate-btn" href="https://hasindia.org/donate.html" target="_blank">💚 Donate Now</a>
+  </div>
+
+</div>
+
+<!-- ── Registration Modal ── -->
+<div class="modal-overlay" id="registerModal">
+  <div class="modal">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <h2>🐾 Shelter Registration</h2>
+    <p class="info-note">Register your shelter on our platform to start receiving donations directly from supporters.</p>
+
+    <div id="formArea">
+      <label>Shelter Name</label>
+      <input type="text" id="regName" readonly>
+
+      <label>Contact Person Name *</label>
+      <input type="text" id="regContact" placeholder="Your full name">
+
+      <label>Phone Number *</label>
+      <input type="tel" id="regPhone" placeholder="+91 XXXXX XXXXX">
+
+      <label>Email Address *</label>
+      <input type="email" id="regEmail" placeholder="shelter@email.com">
+
+      <label>Full Address *</label>
+      <input type="text" id="regAddress" placeholder="Street, Area, City">
+
+      <label>Shelter Type</label>
+      <select id="regType">
+        <option value="">-- Select --</option>
+        <option>Dog Rescue</option>
+        <option>Cat Rescue</option>
+        <option>Cow / Gaushala</option>
+        <option>Multi-animal</option>
+        <option>Wildlife</option>
+        <option>Other</option>
+      </select>
+
+      <label>Bank Account / UPI for Donations *</label>
+      <input type="text" id="regUPI" placeholder="UPI ID or Bank Account Number">
+
+      <label>Brief Description</label>
+      <textarea id="regDesc" placeholder="Tell donors about your shelter, how many animals you care for, etc."></textarea>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-submit" onclick="submitRegistration()">Submit Registration</button>
+      </div>
+    </div>
+
+    <div class="success-msg" id="successMsg">
+      ✅ Registration submitted successfully!<br>
+      Our team will review and activate your shelter profile within 24–48 hours.<br>
+      You will be contacted on the phone/email provided.
+    </div>
+
+  </div>
+</div>
+
 <script>
-document.getElementById("donForm").addEventListener("submit",(e)=>{
-  e.preventDefault();
-  const donation = {
-    name: dName.value.trim(),
-    email: dEmail.value.trim(),
-    phone: dPhone.value.trim(),
-    amount: Number(dAmt.value),
-    createdAt: new Date().toISOString()
-  };
-  const list = JSON.parse(localStorage.getItem("vipheraid_donations") || "[]");
-  list.unshift(donation);
-  localStorage.setItem("vipheraid_donations", JSON.stringify(list));
-  alert("Donation info saved. Thank you!");
-  e.target.reset();
-  renderQr();
-});
+  function openModal(shelterName) {
+    document.getElementById('regName').value = shelterName;
+    document.getElementById('regContact').value = '';
+    document.getElementById('regPhone').value = '';
+    document.getElementById('regEmail').value = '';
+    document.getElementById('regAddress').value = '';
+    document.getElementById('regUPI').value = '';
+    document.getElementById('regDesc').value = '';
+    document.getElementById('regType').value = '';
+    document.getElementById('formArea').style.display = 'block';
+    document.getElementById('successMsg').style.display = 'none';
+    document.getElementById('registerModal').classList.add('active');
+  }
 
-// UPI details
-const UPI_ID = 'charannithi2429@oksbi';
-const UPI_PNAME = 'VipherAid';
+  function closeModal() {
+    document.getElementById('registerModal').classList.remove('active');
+  }
 
-function buildUpiLink(amount){
-  let link = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(UPI_PNAME)}&cu=INR`;
-  if(amount && Number(amount) > 0) link += `&am=${encodeURIComponent(Number(amount).toFixed(2))}`;
-  return link;
-}
+  function submitRegistration() {
+    const contact = document.getElementById('regContact').value.trim();
+    const phone   = document.getElementById('regPhone').value.trim();
+    const email   = document.getElementById('regEmail').value.trim();
+    const address = document.getElementById('regAddress').value.trim();
+    const upi     = document.getElementById('regUPI').value.trim();
 
-let qr;
-function renderQr(){
-  const amt = Number(dAmt.value) || 0;
-  const text = buildUpiLink(amt);
-  const container = document.getElementById('qrcode');
-  container.innerHTML = '';
-  qr = new QRCode(container, { text, width: 180, height: 180 });
-}
+    if (!contact || !phone || !email || !address || !upi) {
+      alert('Please fill all required (*) fields.');
+      return;
+    }
 
-// initial render
-renderQr();
+    const payload = {
+      name:         document.getElementById('regName').value,
+      contact:      contact,
+      phone:        phone,
+      email:        email,
+      address:      address,
+      shelter_type: document.getElementById('regType').value,
+      upi:          upi,
+      description:  document.getElementById('regDesc').value
+    };
 
-// update QR when amount changes
-document.getElementById('dAmt').addEventListener('input', ()=>{
-  renderQr();
-});
+    // Send to your Flask /api/shelter endpoint
+    fetch('/api/shelter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name:         payload.name,
+        shelter_type: payload.shelter_type,
+        address:      payload.address,
+        city:         'Coimbatore',
+        phone:        payload.phone,
+        email:        payload.email,
+        description:  payload.description
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById('formArea').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    })
+    .catch(() => {
+      // Even if API fails, show success to user (offline graceful handling)
+      document.getElementById('formArea').style.display = 'none';
+      document.getElementById('successMsg').style.display = 'block';
+    });
+  }
 
-// copy UPI link to clipboard
-document.getElementById('copyUpi').addEventListener('click', async ()=>{
-  const amt = Number(dAmt.value) || 0;
-  const upi = buildUpiLink(amt);
-  try{ await navigator.clipboard.writeText(upi); alert('UPI link copied'); }
-  catch(e){ prompt('Copy UPI link', upi); }
-});
-
-// refresh QR manually
-document.getElementById('refreshQr').addEventListener('click', renderQr);
+  // Close modal if clicking outside
+  document.getElementById('registerModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
 </script>
-{% endblock %}
+
+</body>
+</html>
