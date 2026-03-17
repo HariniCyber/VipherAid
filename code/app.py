@@ -5,15 +5,18 @@ from werkzeug.utils import secure_filename
 from ultralytics import YOLO
 from PIL import Image
 import google.generativeai as genai
+
 import os, json, base64, math, io, uuid
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "vipheraid_expo_final_2026_madurai"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///viperaid.db")
+# Database config
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///viperaid.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
@@ -26,7 +29,11 @@ db = SQLAlchemy(app)
 model = YOLO("yolov8n.pt")
 
 # ── Gemini setup ──
-GEMINI_KEY = "YOUR_GEMINI_API_KEY_HERE"
+GEMINI_KEY = os.getenv("GEMINI_API_KEY")
+
+if not GEMINI_KEY:
+    raise ValueError("❌ GEMINI_API_KEY not found in .env file")
+
 genai.configure(api_key=GEMINI_KEY)
 gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
