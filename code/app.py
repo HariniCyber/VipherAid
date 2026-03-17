@@ -4,10 +4,16 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
 from PIL import Image
+
 from google import genai
 from google.genai import types
-import os, json, base64, io, uuid, math
 
+import os
+import json
+import base64
+import io
+import uuid
+import math
 app = Flask(__name__)
 app.secret_key = "vipheraid_expo_final_2026_madurai"
 
