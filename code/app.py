@@ -4,20 +4,17 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
 from PIL import Image
-from google import genai
-from google.genai import types
-import os, json, base64, io, uuid, math
+import google.generativeai as genai
+import os, json, base64, math, io, uuid
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = "vipheraid_expo_final_2026_madurai"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://neondb_owner:npg_ITNU4Oc2EQfd@ep-billowing-unit-amvksfur-pooler.c-5.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///viperaid.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_pre_ping": True,
-    "pool_recycle": 300,
-    "connect_args": {"sslmode": "require", "connect_timeout": 10}
-}
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024
 
@@ -26,12 +23,14 @@ os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 db = SQLAlchemy(app)
 
 # ── YOLO model ──
-yolo_model = YOLO("yolov8n.pt")
+model = YOLO("yolov8n.pt")
 
 # ── Gemini setup ──
-GEMINI_KEY = "AIzaSyD38b-cJilMy3jevhOuHbfSC6yBxi8g70c"
-client = genai.Client(api_key=GEMINI_KEY)
+GEMINI_KEY = "YOUR_GEMINI_API_KEY_HERE"
+genai.configure(api_key=GEMINI_KEY)
+gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
+# Animal classes allowed
 ANIMAL_CLASSES = [
     "bird", "cat", "dog", "horse", "sheep",
     "cow", "elephant", "bear", "zebra", "giraffe"
@@ -78,24 +77,7 @@ class Shelter(db.Model):
 
 
 with app.app_context():
-    try:
-        db.create_all()
-        print("✅ Database connected and tables ready.")
-    except Exception as e:
-        print(f"⚠️ DB connection failed at startup: {e}")
-
-
-# ───────────────── HELPER ─────────────────
-def haversine(lat1, lon1, lat2, lon2):
-    """Calculate distance in km between two GPS coordinates."""
-    R = 6371
-    d_lat = math.radians(lat2 - lat1)
-    d_lon = math.radians(lon2 - lon1)
-    a = (math.sin(d_lat / 2) ** 2 +
-         math.cos(math.radians(lat1)) *
-         math.cos(math.radians(lat2)) *
-         math.sin(d_lon / 2) ** 2)
-    return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    db.create_all()
 
 
 # ───────────────── PAGES ─────────────────
@@ -147,53 +129,7 @@ def logout():
     return redirect("/")
 
 
-# ───────────────── NEARBY SHELTERS API ─────────────────
-@app.route("/api/nearby-shelters")
-def api_nearby_shelters():
-    try:
-        lat    = request.args.get("lat",    type=float)
-        lng    = request.args.get("lng",    type=float)
-        radius = request.args.get("radius", default=50, type=float)
-
-        if lat is None or lng is None:
-            return jsonify({"error": "lat and lng are required"}), 400
-
-        shelters = Shelter.query.all()
-        nearby   = []
-
-        for s in shelters:
-            if not s.geo:
-                continue
-            try:
-                parts = s.geo.split(",")
-                s_lat = float(parts[0].strip())
-                s_lng = float(parts[1].strip())
-            except Exception:
-                continue
-
-            dist = haversine(lat, lng, s_lat, s_lng)
-            if dist <= radius:
-                nearby.append({
-                    "id":             s.id,
-                    "name":           s.name,
-                    "shelter_type":   s.shelter_type,
-                    "address":        s.address,
-                    "city":           s.city,
-                    "phone":          s.phone,
-                    "email":          s.email,
-                    "hours":          s.hours,
-                    "animals_helped": s.animals_helped,
-                    "distance_km":    round(dist, 1)
-                })
-
-        nearby.sort(key=lambda x: x["distance_km"])
-        return jsonify({"shelters": nearby})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-# ───────────────── AI REPORT API ─────────────────
+# ───────────────── AI REPORT API (Gemini) ─────────────────
 @app.route("/api/ai-report", methods=["POST"])
 def ai_report():
     try:
@@ -205,17 +141,15 @@ def ai_report():
         path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         photo.save(path)
 
-        # YOLO detection
         image = Image.open(path).convert("RGB")
-        results = yolo_model(image)
+        results = model(image)
         detected_animal = "Unknown"
         for r in results:
             for box in r.boxes:
                 cls = int(box.cls[0])
-                detected_animal = yolo_model.names.get(cls, "Unknown")
+                detected_animal = model.names.get(cls, "Unknown")
                 break
 
-        # Gemini vision analysis
         prompt = """You are a veterinary assistant. Look at this animal image carefully.
 Analyze the animal and return ONLY a valid JSON object — no extra text, no markdown, no backticks:
 {
@@ -228,25 +162,15 @@ Analyze the animal and return ONLY a valid JSON object — no extra text, no mar
 }"""
 
         try:
-            img_byte_arr = io.BytesIO()
-            image.save(img_byte_arr, format="JPEG")
-            img_bytes = img_byte_arr.getvalue()
-
-            response = client.models.generate_content(
-                model="gemini-2.5-flash-preview-04-17",
-                contents=[
-                    types.Part.from_bytes(data=img_bytes, mime_type="image/jpeg"),
-                    types.Part.from_text(text=prompt)
-                ]
-            )
-
-            ai_text = response.text.strip()
+            gemini_response = gemini_model.generate_content([prompt, image])
+            ai_text = gemini_response.text.strip()
 
             if "```" in ai_text:
                 ai_text = ai_text.split("```")[1]
                 if ai_text.lower().startswith("json"):
                     ai_text = ai_text[4:]
             ai_text = ai_text.strip()
+
             ai_data = json.loads(ai_text)
 
         except Exception as gemini_err:
@@ -256,28 +180,29 @@ Analyze the animal and return ONLY a valid JSON object — no extra text, no mar
                 "injury":      "Could not analyze image",
                 "severity":    "Unknown",
                 "urgency":     "Medium",
-                "description": f"Gemini error: {str(gemini_err)}"
+                "description": "Gemini could not analyze. Please check your API key."
             }
 
         latitude  = request.form.get("latitude",  type=float)
         longitude = request.form.get("longitude", type=float)
         geo       = f"{latitude},{longitude}" if latitude and longitude else None
+
         report_id = "VA" + uuid.uuid4().hex[:10].upper()
 
         new_report = Report(
-            id          = report_id,
-            animal_type = ai_data.get("animal_type", detected_animal),
-            breed       = ai_data.get("breed",       "Unknown"),
-            injury      = ai_data.get("injury",      "Unknown"),
-            severity    = ai_data.get("severity",    "Unknown"),
-            urgency     = ai_data.get("urgency",     "Medium"),
-            description = ai_data.get("description", "No description"),
-            photo_url   = f"/static/uploads/{filename}",
-            latitude    = latitude,
-            longitude   = longitude,
-            geo         = geo,
-            status      = "Reported",
-            assigned_to = ""
+            id             = report_id,
+            animal_type    = ai_data.get("animal_type", detected_animal),
+            breed          = ai_data.get("breed",       "Unknown"),
+            injury         = ai_data.get("injury",      "Unknown"),
+            severity       = ai_data.get("severity",    "Unknown"),
+            urgency        = ai_data.get("urgency",     "Medium"),
+            description    = ai_data.get("description", "No description"),
+            photo_url      = f"/static/uploads/{filename}",
+            latitude       = latitude,
+            longitude      = longitude,
+            geo            = geo,
+            status         = "Reported",
+            assigned_to    = ""
         )
         db.session.add(new_report)
         db.session.commit()
@@ -334,6 +259,7 @@ def api_create_report():
     )
     db.session.add(r)
     db.session.commit()
+
     return jsonify({"success": True, "id": r.id, "photoUrl": photo_url})
 
 
@@ -471,12 +397,13 @@ def api_detect_animal():
     try:
         image_bytes = base64.b64decode(image_b64)
         image       = Image.open(io.BytesIO(image_bytes))
-        results     = yolo_model(image)
+        results     = model(image)
 
         for r in results:
             for box in r.boxes:
                 cls   = int(box.cls[0])
-                label = yolo_model.names[cls]
+                label = model.names[cls]
+
                 if label in ANIMAL_CLASSES:
                     x1, y1, x2, y2 = box.xyxy[0].tolist()
                     bbox = {
