@@ -4,211 +4,214 @@
 
 {% block content %}
 <section class="py-5">
-<div class="container" style="max-width: 750px;">
+  <div class="container" style="max-width: 750px;">
 
-  <h2 class="fw-bold mb-2">AI Animal Rescue Report</h2>
-  <p class="text-muted mb-4">Upload an animal photo. Gemini AI will analyze the injury, track your location, and create a rescue report.</p>
+    <h2 class="fw-bold mb-2">AI Animal Rescue Report</h2>
+    <p class="text-muted mb-4">
+      Upload an animal photo. Our system will detect the animal and create a rescue report with your location.
+    </p>
 
-  <!-- Location Status Bar -->
-  <div style="background:#f0f7ff;border:1px solid #cce0ff;border-radius:8px;padding:10px 14px;margin-bottom:20px;font-size:14px;display:flex;align-items:center;gap:8px;">
-    <span id="locationDot" style="width:10px;height:10px;border-radius:50%;background:#f0ad4e;display:inline-block;flex-shrink:0;"></span>
-    <span id="locationText">Getting your location...</span>
-  </div>
-
-  <form id="reportForm" enctype="multipart/form-data">
-    <input type="hidden" id="latitude" name="latitude">
-    <input type="hidden" id="longitude" name="longitude">
-
-    <!-- Photo Upload Area -->
-    <div id="uploadArea" style="border:2px dashed #ccc;border-radius:10px;padding:30px;text-align:center;margin-bottom:20px;cursor:pointer;" onclick="document.getElementById('photoInput').click()">
-      <input type="file" id="photoInput" name="photo" accept="image/*" required style="display:none;" onchange="previewImage(this)">
-      <div id="uploadPlaceholder">
-        <div style="font-size:40px;margin-bottom:8px;">📷</div>
-        <p style="margin:0;color:#555;font-size:15px;">Click to upload animal photo</p>
-        <p style="margin:4px 0 0;font-size:12px;color:#aaa;">JPG, PNG up to 16MB</p>
-      </div>
-      <img id="previewImg" style="display:none;max-width:100%;max-height:260px;border-radius:8px;margin-top:8px;">
+    <!-- Location Status Bar -->
+    <div style="background:#f0f7ff; border:1px solid #cce0ff; border-radius:8px; padding:10px 14px; margin-bottom:20px; font-size:14px; display:flex; align-items:center; gap:8px;">
+      <span id="locationDot" style="width:10px; height:10px; border-radius:50%; background:#f0ad4e; display:inline-block; flex-shrink:0;"></span>
+      <span id="locationText">Getting your location...</span>
     </div>
 
-    <button type="submit" class="btn btn-primary w-100" style="padding:12px;font-size:16px;">
-      🔍 Analyze Animal with Gemini AI
-    </button>
-  </form>
+    <form id="reportForm" enctype="multipart/form-data">
+      <input type="hidden" id="latitude" name="latitude">
+      <input type="hidden" id="longitude" name="longitude">
 
-  <!-- Loading Spinner -->
-  <div id="loading" style="display:none;margin-top:24px;text-align:center;padding:24px;">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p style="margin-top:12px;color:#555;">Gemini AI is analyzing the image...</p>
-  </div>
-
-  <!-- Result Box -->
-  <div id="resultBox" style="display:none;margin-top:30px;border:1px solid #e0e0e0;border-radius:12px;overflow:hidden;">
-
-    <img id="animalPhoto" style="width:100%;max-height:300px;object-fit:cover;">
-
-    <div style="padding:22px;">
-
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px;">
-        <h4 style="margin:0;font-weight:600;" id="animalTitle">Animal</h4>
-        <span id="severityBadge" style="padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;"></span>
-      </div>
-
-      <table style="width:100%;font-size:15px;border-collapse:collapse;">
-        <tr style="border-bottom:1px solid #f0f0f0;">
-          <td style="padding:10px 0;color:#888;width:130px;">Animal</td>
-          <td style="padding:10px 0;font-weight:500;" id="animal">-</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f0f0f0;">
-          <td style="padding:10px 0;color:#888;">Breed</td>
-          <td style="padding:10px 0;font-weight:500;" id="breed">-</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f0f0f0;">
-          <td style="padding:10px 0;color:#888;">Injury</td>
-          <td style="padding:10px 0;" id="injury">-</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f0f0f0;">
-          <td style="padding:10px 0;color:#888;">Severity</td>
-          <td style="padding:10px 0;" id="severity">-</td>
-        </tr>
-        <tr style="border-bottom:1px solid #f0f0f0;">
-          <td style="padding:10px 0;color:#888;">Urgency</td>
-          <td style="padding:10px 0;" id="urgency">-</td>
-        </tr>
-        <tr>
-          <td style="padding:10px 0;color:#888;vertical-align:top;">Description</td>
-          <td style="padding:10px 0;line-height:1.6;" id="description">-</td>
-        </tr>
-      </table>
-
-      <!-- Location + Map -->
-      <div style="margin-top:22px;padding-top:18px;border-top:1px solid #f0f0f0;">
-        <p style="margin:0 0 6px;font-weight:500;font-size:15px;">📍 Report Location</p>
-        <p id="coordsText" style="font-size:13px;color:#666;margin:0 0 12px;"></p>
-        <div id="mapContainer" style="display:none;border-radius:8px;overflow:hidden;border:1px solid #e0e0e0;">
-          <iframe id="mapFrame" width="100%" height="240" style="border:0;display:block;" allowfullscreen loading="lazy"></iframe>
+      <!-- Photo Upload Area -->
+      <div id="uploadArea" style="border:2px dashed #ccc; border-radius:10px; padding:30px; text-align:center; margin-bottom:20px; cursor:pointer;" onclick="document.getElementById('photoInput').click()">
+        <input type="file" id="photoInput" name="photo" accept="image/*" required style="display:none;" onchange="previewImage(this)">
+        <div id="uploadPlaceholder">
+          <div style="font-size:40px; margin-bottom:8px;">📷</div>
+          <p style="margin:0; color:#555; font-size:15px;">Click to upload animal photo</p>
+          <p style="margin:4px 0 0; font-size:12px; color:#aaa;">JPG, PNG up to 16MB</p>
         </div>
-        <p id="noLocation" style="display:none;font-size:13px;color:#aaa;">Location not captured.</p>
+        <img id="previewImg" style="display:none; max-width:100%; max-height:260px; border-radius:8px; margin-top:8px;">
       </div>
 
-      <!-- Report ID -->
-      <div style="margin-top:18px;padding:10px 14px;background:#fff8e1;border-radius:8px;font-size:13px;color:#8a6000;">
-        ⚠️ Report ID: <strong id="reportId"></strong> — Rescue team has been notified.
-      </div>
+      <button type="submit" class="btn btn-primary w-100" style="padding:12px; font-size:16px;">
+        🔍 Analyze Animal with Gemini AI
+      </button>
+    </form>
 
+    <!-- Loading Spinner -->
+    <div id="loading" style="display:none; margin-top:24px; text-align:center; padding:24px;">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p style="margin-top:12px; color:#555;">📤 Submit Rescue Report</p>
     </div>
-  </div>
 
-</div>
+    <!-- Result Box -->
+    <div id="resultBox" style="display:none; margin-top:30px; border:1px solid #e0e0e0; border-radius:12px; overflow:hidden;">
+      <img id="animalPhoto" style="width:100%; max-height:300px; object-fit:cover;">
+      <div style="padding:22px;">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:18px;">
+          <h4 style="margin:0; font-weight:600;" id="animalTitle">Animal</h4>
+          <span id="severityBadge" style="padding:5px 14px; border-radius:20px; font-size:13px; font-weight:500;"></span>
+        </div>
+
+        <table style="width:100%; font-size:15px; border-collapse:collapse;">
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:10px 0; color:#888; width:130px;">Animal</td>
+            <td style="padding:10px 0; font-weight:500;" id="animal">-</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:10px 0; color:#888;">Breed</td>
+            <td style="padding:10px 0; font-weight:500;" id="breed">-</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:10px 0; color:#888;">Injury</td>
+            <td style="padding:10px 0;" id="injury">-</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:10px 0; color:#888;">Severity</td>
+            <td style="padding:10px 0;" id="severity">-</td>
+          </tr>
+          <tr style="border-bottom:1px solid #f0f0f0;">
+            <td style="padding:10px 0; color:#888;">Urgency</td>
+            <td style="padding:10px 0;" id="urgency">-</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 0; color:#888; vertical-align:top;">Description</td>
+            <td style="padding:10px 0; line-height:1.6;" id="description">-</td>
+          </tr>
+        </table>
+
+        <!-- Location + Map -->
+        <div style="margin-top:22px; padding-top:18px; border-top:1px solid #f0f0f0;">
+          <p style="margin:0 0 6px; font-weight:500; font-size:15px;">📍 Report Location</p>
+          <p id="coordsText" style="font-size:13px; color:#666; margin:0 0 12px;"></p>
+          <div id="mapContainer" style="display:none; border-radius:8px; overflow:hidden; border:1px solid #e0e0e0;">
+            <iframe id="mapFrame" width="100%" height="240" style="border:0; display:block;" allowfullscreen loading="lazy"></iframe>
+          </div>
+          <p id="noLocation" style="display:none; font-size:13px; color:#aaa;">Location not captured.</p>
+        </div>
+
+        <!-- Report ID -->
+        <div style="margin-top:18px; padding:10px 14px; background:#fff8e1; border-radius:8px; font-size:13px; color:#8a6000;">
+          ⚠️ Report ID: <strong id="reportId"></strong> — Rescue team has been notified.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </section>
 {% endblock %}
 
 {% block scripts %}
 <script>
+  let userLat = null;
+  let userLng = null;
 
-function previewImage(input) {
-  if (input.files && input.files[0]) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      document.getElementById("previewImg").src = e.target.result;
-      document.getElementById("previewImg").style.display = "block";
-      document.getElementById("uploadPlaceholder").style.display = "none";
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
-}
-
-function badgeStyle(severity) {
-  var map = {
-    "Low":      "background:#d4edda;color:#155724;",
-    "Moderate": "background:#fff3cd;color:#856404;",
-    "Severe":   "background:#f8d7da;color:#721c24;",
-    "Critical": "background:#f5c6cb;color:#491217;"
-  };
-  return map[severity] || "background:#e2e3e5;color:#383d41;";
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-
-  var dot  = document.getElementById("locationDot");
-  var text = document.getElementById("locationText");
-
-  if (navigator.geolocation) {
-    navigator.geolocation.watchPosition(
-      function(pos) {
-        var lat = pos.coords.latitude.toFixed(6);
-        var lng = pos.coords.longitude.toFixed(6);
-        document.getElementById("latitude").value  = lat;
-        document.getElementById("longitude").value = lng;
-        dot.style.background = "#28a745";
-        text.textContent = "Location captured: " + lat + ", " + lng;
-      },
-      function(err) {
-        dot.style.background = "#dc3545";
-        text.textContent = "Location unavailable — report will be saved without GPS.";
-      },
-      { enableHighAccuracy: true }
-    );
-  } else {
-    dot.style.background = "#aaa";
-    text.textContent = "Geolocation not supported by this browser.";
-  }
-
-  document.getElementById("reportForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    var file = document.getElementById("photoInput").files[0];
-    if (!file) { alert("Please upload a photo first."); return; }
-
-    var formData = new FormData();
-    formData.append("photo", file);
-    formData.append("latitude",  document.getElementById("latitude").value);
-    formData.append("longitude", document.getElementById("longitude").value);
-
-    document.getElementById("loading").style.display   = "block";
-    document.getElementById("resultBox").style.display = "none";
-
-    try {
-      var res  = await fetch("/api/ai-report", { method: "POST", body: formData });
-      var data = await res.json();
-      document.getElementById("loading").style.display = "none";
-
-      if (data.success) {
-        document.getElementById("resultBox").style.display = "block";
-
-        document.getElementById("animalPhoto").src         = data.photoUrl;
-        document.getElementById("animalTitle").textContent = (data.animal || "Animal") + (data.breed && data.breed !== "Unknown" ? " — " + data.breed : "");
-        document.getElementById("animal").textContent      = data.animal      || "Unknown";
-        document.getElementById("breed").textContent       = data.breed       || "Unknown";
-        document.getElementById("injury").textContent      = data.injury      || "None detected";
-        document.getElementById("severity").textContent    = data.severity    || "Unknown";
-        document.getElementById("urgency").textContent     = data.urgency     || "Medium";
-        document.getElementById("description").textContent = data.description || "No details available.";
-        document.getElementById("reportId").textContent    = data.id;
-
-        var badge = document.getElementById("severityBadge");
-        badge.textContent   = data.severity || "Unknown";
-        badge.style.cssText = badgeStyle(data.severity);
-
-        if (data.latitude && data.longitude) {
-          document.getElementById("coordsText").textContent     = "Lat: " + data.latitude + "   Lng: " + data.longitude;
-          document.getElementById("mapFrame").src               = "https://maps.google.com/maps?q=" + data.latitude + "," + data.longitude + "&z=15&output=embed";
-          document.getElementById("mapContainer").style.display = "block";
-        } else {
-          document.getElementById("noLocation").style.display = "block";
-        }
-
-        document.getElementById("resultBox").scrollIntoView({ behavior: "smooth" });
-
-      } else {
-        alert("AI analysis failed: " + (data.error || "Unknown error"));
-      }
-
-    } catch(err) {
-      document.getElementById("loading").style.display = "none";
-      alert("Error: " + err);
-    }
+  // Get current location
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+    document.getElementById("locationText").innerText =
+      `Location captured via GPS: ${userLat}, ${userLng}`;
   });
 
-});
+  function previewImage(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById("previewImg").src = e.target.result;
+        document.getElementById("previewImg").style.display = "block";
+        document.getElementById("uploadPlaceholder").style.display = "none";
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  function badgeStyle(severity) {
+    const map = {
+      "Low": "background:#d4edda;color:#155724;",
+      "Moderate": "background:#fff3cd;color:#856404;",
+      "Severe": "background:#f8d7da;color:#721c24;",
+      "Critical": "background:#f5c6cb;color:#491217;"
+    };
+    return map[severity] || "background:#e2e3e5;color:#383d41;";
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const dot = document.getElementById("locationDot");
+    const text = document.getElementById("locationText");
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        function(pos) {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lng = pos.coords.longitude.toFixed(6);
+          document.getElementById("latitude").value = lat;
+          document.getElementById("longitude").value = lng;
+          dot.style.background = "#28a745";
+          text.textContent = "Location captured: " + lat + ", " + lng;
+        },
+        function(err) {
+          dot.style.background = "#dc3545";
+          text.textContent = "Location unavailable — report will be saved without GPS.";
+        },
+        { enableHighAccuracy: true }
+      );
+    } else {
+      dot.style.background = "#aaa";
+      text.textContent = "Geolocation not supported by this browser.";
+    }
+
+    // Form submission
+    document.getElementById("reportForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const file = document.getElementById("photoInput").files[0];
+      if (!file) { alert("Please upload a photo first."); return; }
+
+      const formData = new FormData();
+      formData.append("photo", file);
+      formData.append("latitude", document.getElementById("latitude").value);
+      formData.append("longitude", document.getElementById("longitude").value);
+
+      document.getElementById("loading").style.display = "block";
+      document.getElementById("resultBox").style.display = "none";
+
+      try {
+        const res = await fetch("/api/ai-report", { method: "POST", body: formData });
+        const data = await res.json();
+        document.getElementById("loading").style.display = "none";
+
+        if (data.success) {
+          document.getElementById("resultBox").style.display = "block";
+          document.getElementById("animalPhoto").src = data.photoUrl;
+          document.getElementById("animalTitle").textContent = data.animal || "Animal Detected";
+          document.getElementById("animal").textContent = data.animal || "Unknown";
+          document.getElementById("breed").textContent = "Not analyzed";
+          document.getElementById("injury").textContent = "Needs manual inspection";
+          document.getElementById("severity").textContent = "Medium";
+          document.getElementById("urgency").textContent = "Medium";
+          document.getElementById("description").textContent = "Animal detected using AI model. Rescue team should verify condition.";
+          document.getElementById("reportId").textContent = data.id;
+
+          if (userLat && userLng) {
+            document.getElementById("coordsText").textContent = `Lat: ${userLat}   Lng: ${userLng}`;
+            document.getElementById("mapFrame").src = `https://maps.google.com/maps?q=${userLat},${userLng}&z=15&output=embed`;
+            document.getElementById("mapContainer").style.display = "block";
+          } else {
+            document.getElementById("noLocation").style.display = "block";
+          }
+
+          document.getElementById("resultBox").scrollIntoView({ behavior: "smooth" });
+        } else {
+          alert("Report failed: " + (data.error || "Unknown error"));
+        }
+
+      } catch (err) {
+        document.getElementById("loading").style.display = "none";
+        alert("Error: " + err);
+      }
+    });
+  });
 </script>
 {% endblock %}

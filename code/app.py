@@ -4,7 +4,6 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
 from PIL import Image
-import google.generativeai as genai
 
 import os, json, base64, math, io, uuid
 from dotenv import load_dotenv
@@ -27,15 +26,6 @@ db = SQLAlchemy(app)
 
 # ── YOLO model ──
 model = YOLO("yolov8n.pt")
-
-# ── Gemini setup ──
-GEMINI_KEY = os.getenv("GEMINI_API_KEY")
-
-if not GEMINI_KEY:
-    raise ValueError("❌ GEMINI_API_KEY not found in .env file")
-
-genai.configure(api_key=GEMINI_KEY)
-gemini_model = genai.GenerativeModel("gemini-1.5-flash")
 
 # Animal classes allowed
 ANIMAL_CLASSES = [
@@ -136,7 +126,6 @@ def logout():
     return redirect("/")
 
 
-# ───────────────── AI REPORT API (Gemini) ─────────────────
 @app.route("/api/ai-report", methods=["POST"])
 def ai_report():
     try:
@@ -148,8 +137,10 @@ def ai_report():
         path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         photo.save(path)
 
+        # Basic detection using YOLO (optional but nice)
         image = Image.open(path).convert("RGB")
         results = model(image)
+
         detected_animal = "Unknown"
         for r in results:
             for box in r.boxes:
@@ -157,170 +148,68 @@ def ai_report():
                 detected_animal = model.names.get(cls, "Unknown")
                 break
 
-        prompt = """You are a veterinary assistant. Look at this animal image carefully.
-Analyze the animal and return ONLY a valid JSON object — no extra text, no markdown, no backticks:
-{
-  "animal_type": "type of animal you see",
-  "breed": "best guess at the breed",
-  "injury": "describe visible injuries, or write None if the animal looks healthy",
-  "severity": "one of: Low, Moderate, Severe, Critical",
-  "urgency": "one of: Low, Medium, High, Emergency",
-  "description": "2-3 sentences summarizing the animal condition and recommended action"
-}"""
-
-        try:
-            gemini_response = gemini_model.generate_content([prompt, image])
-            ai_text = gemini_response.text.strip()
-
-            if "```" in ai_text:
-                ai_text = ai_text.split("```")[1]
-                if ai_text.lower().startswith("json"):
-                    ai_text = ai_text[4:]
-            ai_text = ai_text.strip()
-
-            ai_data = json.loads(ai_text)
-
-        except Exception as gemini_err:
-            ai_data = {
-                "animal_type": detected_animal,
-                "breed":       "Unknown",
-                "injury":      "Could not analyze image",
-                "severity":    "Unknown",
-                "urgency":     "Medium",
-                "description": "Gemini could not analyze. Please check your API key."
-            }
-
-        latitude  = request.form.get("latitude",  type=float)
+        # GPS from frontend
+        latitude  = request.form.get("latitude", type=float)
         longitude = request.form.get("longitude", type=float)
         geo       = f"{latitude},{longitude}" if latitude and longitude else None
 
         report_id = "VA" + uuid.uuid4().hex[:10].upper()
 
         new_report = Report(
-            id             = report_id,
-            animal_type    = ai_data.get("animal_type", detected_animal),
-            breed          = ai_data.get("breed",       "Unknown"),
-            injury         = ai_data.get("injury",      "Unknown"),
-            severity       = ai_data.get("severity",    "Unknown"),
-            urgency        = ai_data.get("urgency",     "Medium"),
-            description    = ai_data.get("description", "No description"),
-            photo_url      = f"/static/uploads/{filename}",
-            latitude       = latitude,
-            longitude      = longitude,
-            geo            = geo,
-            status         = "Reported",
-            assigned_to    = ""
+            id=report_id,
+            animal_type=detected_animal,
+            breed="Unknown",
+            injury="Not analyzed",
+            severity="Medium",
+            urgency="Medium",
+            description="Animal reported via image upload. Needs inspection.",
+            photo_url=f"/static/uploads/{filename}",
+            latitude=latitude,
+            longitude=longitude,
+            geo=geo,
+            status="Reported"
         )
+
         db.session.add(new_report)
         db.session.commit()
 
         return jsonify({
-            "success":     True,
-            "id":          new_report.id,
-            "animal":      new_report.animal_type,
-            "breed":       new_report.breed,
-            "injury":      new_report.injury,
-            "severity":    new_report.severity,
-            "urgency":     new_report.urgency,
-            "description": new_report.description,
-            "photoUrl":    new_report.photo_url,
-            "latitude":    new_report.latitude,
-            "longitude":   new_report.longitude
+            "success": True,
+            "id": new_report.id,
+            "animal": new_report.animal_type,
+            "photoUrl": new_report.photo_url
         })
 
     except Exception as e:
-        return jsonify({"success": False, "error": f"Server error: {str(e)}"}), 500
+        return jsonify({"success": False, "error": str(e)}), 500
 
+# ───────────────── NEARBY SHELTERS (NO GEO) ─────────────────
+@app.route("/api/nearby-shelters")
+def api_nearby_shelters():
+    try:
+        shelters = Shelter.query.order_by(Shelter.created_at.desc()).all()
 
-# ───────────────── REPORT APIs ─────────────────
-@app.route("/api/report", methods=["POST"])
-def api_create_report():
-    if request.is_json:
-        data  = request.json or {}
-        photo = None
-    else:
-        data  = request.form.to_dict()
-        photo = request.files.get("photo")
+        result = []
+        for i, s in enumerate(shelters):
+            result.append({
+                "id": s.id,
+                "name": s.name,
+                "shelter_type": s.shelter_type,
+                "address": s.address,
+                "city": s.city,
+                "phone": s.phone,
+                "email": s.email,
+                "hours": s.hours,
+                "animals_helped": s.animals_helped,
+                
+                # fake distance just for UI
+                "distance_km": round(1 + i * 2, 1)
+            })
 
-    photo_url = None
-    if photo and photo.filename:
-        filename  = secure_filename(f"{uuid.uuid4().hex}_{photo.filename}")
-        photo.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-        photo_url = f"/static/uploads/{filename}"
+        return jsonify({"shelters": result})
 
-    is_emerg = str(data.get("isEmergency", "")).lower() in ("true", "1", "yes")
-
-    r = Report(
-        id             = "VA" + uuid.uuid4().hex[:10].upper(),
-        animal_type    = data.get("animalType"),
-        urgency        = data.get("urgency", "Medium"),
-        location_text  = data.get("locationText"),
-        geo            = data.get("geo"),
-        description    = data.get("description"),
-        reporter_name  = data.get("reporterName") or session.get("citizen_name"),
-        reporter_phone = data.get("reporterPhone") or session.get("citizen_phone"),
-        status         = "Reported",
-        assigned_to    = "",
-        photo_url      = photo_url,
-        is_emergency   = is_emerg
-    )
-    db.session.add(r)
-    db.session.commit()
-
-    return jsonify({"success": True, "id": r.id, "photoUrl": photo_url})
-
-
-@app.route("/api/reports")
-def api_reports():
-    reports = Report.query.order_by(
-        Report.is_emergency.desc(),
-        Report.created_at.desc()
-    ).limit(100).all()
-
-    return jsonify([{
-        "id":            r.id,
-        "animalType":    r.animal_type,
-        "breed":         r.breed,
-        "injury":        r.injury,
-        "severity":      r.severity,
-        "urgency":       r.urgency,
-        "locationText":  r.location_text,
-        "geo":           r.geo,
-        "description":   r.description,
-        "status":        r.status,
-        "assignedTo":    r.assigned_to,
-        "photoUrl":      r.photo_url,
-        "isEmergency":   bool(r.is_emergency),
-        "reporterName":  r.reporter_name,
-        "reporterPhone": r.reporter_phone,
-        "latitude":      r.latitude,
-        "longitude":     r.longitude,
-        "createdAt":     r.created_at.isoformat()
-    } for r in reports])
-
-
-@app.route("/api/report/<report_id>", methods=["POST"])
-def api_update_report(report_id):
-    if not session.get("rescuer"):
-        return jsonify({"error": "Unauthorized"}), 403
-    r    = Report.query.get_or_404(report_id)
-    data = request.json or {}
-    if "status"     in data: r.status      = data["status"]
-    if "assignedTo" in data: r.assigned_to = data["assignedTo"]
-    db.session.commit()
-    return jsonify({"success": True})
-
-
-@app.route("/api/report/<report_id>", methods=["DELETE"])
-def api_delete_report(report_id):
-    if not session.get("rescuer"):
-        return jsonify({"error": "Unauthorized"}), 403
-    r = Report.query.get_or_404(report_id)
-    db.session.delete(r)
-    db.session.commit()
-    return jsonify({"success": True})
-
-
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ───────────────── SHELTER APIs ─────────────────
 @app.route("/api/shelter", methods=["POST"])
 def api_create_shelter():
