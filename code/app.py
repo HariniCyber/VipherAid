@@ -1,3 +1,15 @@
+
+
+
+
+
+
+
+
+
+
+
+
 from flask import Flask, render_template, request, redirect, session, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -137,7 +149,7 @@ def ai_report():
         path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
         photo.save(path)
 
-        # Basic detection using YOLO (optional but nice)
+        # YOLO detection — use as fallback if reporter didn't name the animal
         image = Image.open(path).convert("RGB")
         results = model(image)
 
@@ -148,6 +160,15 @@ def ai_report():
                 detected_animal = model.names.get(cls, "Unknown")
                 break
 
+        # Reporter-supplied fields (from the new form)
+        animal_name    = request.form.get("animal_name", "").strip()
+        description    = request.form.get("description", "").strip()
+        reporter_name  = request.form.get("reporter_name", "").strip()
+        reporter_phone = request.form.get("reporter_phone", "").strip()
+
+        # Use reporter-supplied name if given, else fall back to YOLO
+        final_animal = animal_name if animal_name else detected_animal
+
         # GPS from frontend
         latitude  = request.form.get("latitude", type=float)
         longitude = request.form.get("longitude", type=float)
@@ -157,16 +178,18 @@ def ai_report():
 
         new_report = Report(
             id=report_id,
-            animal_type=detected_animal,
+            animal_type=final_animal,
             breed="Unknown",
             injury="Not analyzed",
             severity="Medium",
             urgency="Medium",
-            description="Animal reported via image upload. Needs inspection.",
+            description=description or "Animal reported via image upload. Needs inspection.",
             photo_url=f"/static/uploads/{filename}",
             latitude=latitude,
             longitude=longitude,
             geo=geo,
+            reporter_name=reporter_name or None,
+            reporter_phone=reporter_phone or None,
             status="Reported"
         )
 
@@ -174,14 +197,62 @@ def ai_report():
         db.session.commit()
 
         return jsonify({
-            "success": True,
-            "id": new_report.id,
-            "animal": new_report.animal_type,
-            "photoUrl": new_report.photo_url
+            "success":       True,
+            "id":            new_report.id,
+            "animal":        new_report.animal_type,
+            "photoUrl":      new_report.photo_url,
+            "reporterName":  new_report.reporter_name,
+            "reporterPhone": new_report.reporter_phone,
+            "description":   new_report.description,
         })
 
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+# ───────────────── REPORTS LIST (for rescue dashboard) ─────────────────
+@app.route("/api/reports")
+def api_get_reports():
+    reports = Report.query.order_by(Report.created_at.desc()).all()
+    result = []
+    for r in reports:
+        result.append({
+            "id":            r.id,
+            "createdAt":     r.created_at.isoformat() if r.created_at else None,
+            "animalType":    r.animal_type,
+            "description":   r.description,
+            "photoUrl":      r.photo_url,
+            "geo":           r.geo,
+            "locationText":  r.location_text,
+            "urgency":       r.urgency or "Medium",
+            "severity":      r.severity,
+            "status":        r.status or "Reported",
+            "assignedTo":    r.assigned_to,
+            "reporterName":  r.reporter_name,
+            "reporterPhone": r.reporter_phone,
+            "isEmergency":   bool(r.is_emergency),
+        })
+    return jsonify(result)
+
+
+@app.route("/api/report/<string:report_id>", methods=["POST"])
+def api_update_report(report_id):
+    report = Report.query.get_or_404(report_id)
+    data = request.json or {}
+    if "status" in data:
+        report.status = data["status"]
+    if "assignedTo" in data:
+        report.assigned_to = data["assignedTo"]
+    db.session.commit()
+    return jsonify({"success": True})
+
+
+@app.route("/api/report/<string:report_id>", methods=["DELETE"])
+def api_delete_report(report_id):
+    report = Report.query.get_or_404(report_id)
+    db.session.delete(report)
+    db.session.commit()
+    return jsonify({"success": True})
 
 # ───────────────── NEARBY SHELTERS (NO GEO) ─────────────────
 @app.route("/api/nearby-shelters")
