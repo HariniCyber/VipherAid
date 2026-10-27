@@ -2,6 +2,12 @@
 
 > Built for **PYEXPO 2026** | Project Code: **PY26006**
 
+
+👑 Leadership & Project Roles
+
+HariniCyber (Team Lead) — Architected the core system layout, managed development pipelines, integrated the AI runtime architecture, and built deployment configurations.
+
+
 ViperAid is an AI-powered web application that bridges the gap between citizens and animal rescue organizations. It enables the public to report injured or stray animals using computer vision, connects them with nearby shelters, and gives NGO rescue teams a real-time dashboard to manage and respond to cases efficiently.
 
 🌐 **Live Demo:** [https://vipheraid-deploy-7.onrender.com]
@@ -216,4 +222,4 @@ See `requirements.txt` for the full pinned dependency list.
 
 ## 📄 License
 
-This project was developed for **PYEXPO 2026**. All rights reserved.
+This project was developed for **PYEXPO 2026**. All rights reserved
