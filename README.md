@@ -1,28 +1,28 @@
 # 🐾 ViperAid — AI-Powered Animal Rescue & Shelter Management System
 
-> Built for **PYEXPO 2026** | Project Code: **PY26006**
-
-
-👑 Leadership & Project Roles
-
-HariniCyber (Team Lead) — Architected the core system layout, managed development pipelines, integrated the AI runtime architecture, and built deployment configurations.
-
+> Built for **PYEXPO 2026** | Project Code: **PY26006** | 🏆 Best UI/UX Award, PyExpo 2K26 Hackathon
 
 ViperAid is an AI-powered web application that bridges the gap between citizens and animal rescue organizations. It enables the public to report injured or stray animals using computer vision, connects them with nearby shelters, and gives NGO rescue teams a real-time dashboard to manage and respond to cases efficiently.
 
-🌐 **Live Demo:** [https://vipheraid-deploy-7.onrender.com]
+🌐 **Live Demo:** [vipheraid-deploy-7.onrender.com](https://vipheraid-deploy-7.onrender.com)
+
+---
+
+## 👑 Leadership & Project Roles
+
+**HariniCyber (Team Lead)**: Architected the core system layout, managed development pipelines, integrated the AI runtime architecture, and built deployment configurations.
 
 ---
 
 ## ✨ Features
 
-- 📸 **AI Animal Detection** — YOLOv8-powered image recognition identifies the animal species from a photo
-- 🗺️ **GPS Location Tracking** — Reports are geotagged for accurate field dispatch
-- 🚨 **Emergency Flagging** — Critical cases are marked and surfaced for immediate attention
-- 🏠 **Shelter Directory** — Register, browse, and manage animal shelters with contact and capacity details
-- 👥 **NGO Rescue Dashboard** — Dedicated login portal for rescue teams to view, assign, and resolve reports
-- 📊 **Public Stats** — Live counters for total, active, and resolved animal rescue cases
-- ☁️ **Cloud Database** — Supabase (PostgreSQL) for persistent, scalable data storage
+- 📸 **AI Animal Detection**: YOLOv8-powered image recognition identifies the animal species from a photo
+- 🗺️ **GPS Location Tracking**: Reports are geotagged for accurate field dispatch
+- 🚨 **Emergency Flagging**: Critical cases are marked and surfaced for immediate attention
+- 🏠 **Shelter Directory**: Register, browse, and manage animal shelters with contact and capacity details
+- 👥 **NGO Rescue Dashboard**: Dedicated login portal for rescue teams to view, assign, and resolve reports
+- 📊 **Public Stats**: Live counters for total, active, and resolved animal rescue cases
+- ☁️ **Cloud Database**: Supabase (PostgreSQL) for persistent, scalable data storage
 
 ---
 
@@ -43,7 +43,7 @@ ViperAid is an AI-powered web application that bridges the gap between citizens 
 ## 📁 Project Structure
 
 ```
-PY26006-main/
+ViperAid/
 ├── Procfile                    # Render deployment config
 ├── requirements.txt            # Python dependencies
 ├── Documentation/
@@ -54,16 +54,12 @@ PY26006-main/
 └── code/
     ├── app.py                  # Main Flask application
     ├── migrate_db.py           # Database migration helper
-    ├── .env                    # Environment variables (do NOT commit)
     ├── .gitignore
     ├── yolov8n.pt              # YOLOv8 nano model weights
-    ├── instance/
-    │   └── viperaid.db         # Local SQLite database
     ├── static/
     │   ├── logo_cropped.png
     │   ├── qrcode.jpeg
-    │   ├── style.css
-    │   └── uploads/            # User-uploaded animal photos
+    │   └── style.css
     └── templates/
         ├── base.html
         ├── index.html
@@ -74,6 +70,8 @@ PY26006-main/
         ├── shelter.html
         └── donate.html
 ```
+
+> `.env`, the local SQLite database, and uploaded animal photos are created locally and are excluded from the repository by `.gitignore`.
 
 ---
 
@@ -88,14 +86,14 @@ PY26006-main/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/viperaid.git
-cd viperaid/code
+git clone https://github.com/HariniCyber/ViperAid.git
+cd ViperAid/code
 ```
 
 ### 2. Install dependencies
 
 ```bash
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
 ### 3. Configure environment variables
@@ -104,9 +102,10 @@ Create a `.env` file inside the `code/` folder:
 
 ```env
 DATABASE_URL=postgresql://postgres:YourPassword@db.xxxx.supabase.co:5432/postgres
+NGO_ACCESS_CODE=choose-your-own-strong-code
 ```
 
-> For local development, you can omit this and the app will fall back to SQLite (`instance/viperaid.db`).
+> For local development, you can omit `DATABASE_URL` and the app will fall back to SQLite.
 
 ### 4. Run the app
 
@@ -120,12 +119,7 @@ Open your browser at `http://127.0.0.1:5000`
 
 ## 🔐 NGO Rescue Login
 
-Rescue teams can access the management dashboard at `/rescue-login`:
-
-| Field | Value |
-|---|---|
-| Organization Name | Your NGO name |
-| Access Code | `VIPERNGO` |
+Rescue teams sign in at `/rescue-login` with their organization name and an access code. The access code is set by the administrator through the `NGO_ACCESS_CODE` environment variable and is never stored in the repository.
 
 ---
 
@@ -174,12 +168,13 @@ Stores registered animal shelter information including name, type, address, capa
 | Variable | Description |
 |---|---|
 | `DATABASE_URL` | Supabase PostgreSQL connection string |
+| `NGO_ACCESS_CODE` | Access code for the NGO rescue dashboard |
 
 ---
 
 ## ☁️ Deployment
 
-The project includes a `Procfile` for one-click deployment to [Render](https://render.com):
+The project includes a `Procfile` for deployment to [Render](https://render.com):
 
 ```
 web: python code/app.py
@@ -187,39 +182,28 @@ web: python code/app.py
 
 Steps:
 1. Push the repository to GitHub.
-2. Create a new **Web Service** on Render, link the repo.
-3. Set `DATABASE_URL` as an environment variable in Render's dashboard.
-4. Deploy — Render will install dependencies and launch the server automatically.
+2. Create a new **Web Service** on Render and link the repo.
+3. Set `DATABASE_URL` and `NGO_ACCESS_CODE` as environment variables in Render's dashboard.
+4. Deploy. Render installs the dependencies and launches the server.
 
 ---
 
 ## ⚠️ Security Notes
 
-- **Never commit** your `.env` file — it's already listed in `.gitignore`
-- **Never hardcode** your `GEMINI_KEY` in source files before pushing to GitHub
-- The default NGO access code (`VIPERNGO`) should be changed before production deployment
-
----
-
-## 📦 Key Dependencies
-
-```bash
-pip install flask flask-sqlalchemy psycopg2-binary python-dotenv \
-            ultralytics pillow opencv-python
-```
-
-See `requirements.txt` for the full pinned dependency list.
+- Never commit your `.env` file; it is listed in `.gitignore`.
+- Never hardcode API keys, database passwords or access codes in source files.
+- Use a strong, unique `NGO_ACCESS_CODE` and change it if it is ever exposed.
 
 ---
 
 ## 🙌 Built With
 
-- [Flask](https://flask.palletsprojects.com/) — Web framework
-- [Supabase](https://supabase.com/) — Cloud PostgreSQL database
-- [Ultralytics YOLOv8](https://ultralytics.com/) — Real-time object detection
+- [Flask](https://flask.palletsprojects.com/): web framework
+- [Supabase](https://supabase.com/): cloud PostgreSQL database
+- [Ultralytics YOLOv8](https://ultralytics.com/): real-time object detection
 
 ---
 
 ## 📄 License
 
-This project was developed for **PYEXPO 2026**. All rights reserved
+This project was developed for **PYEXPO 2026**. All rights reserved.
